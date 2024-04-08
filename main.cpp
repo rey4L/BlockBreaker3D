@@ -10,7 +10,7 @@
 // Blocks postion within the window
 const float x = -1.5f;
 const float y = 0.3f;
-const float z = -4.0f;
+const float z = -8.0f;
 
 int main() {
     initializeGLFW();
@@ -107,7 +107,7 @@ int main() {
         glm::mat4 proj = glm::mat4(1.0f);
 
         view = glm::translate(view, glm::vec3(x, y, z));
-        proj = glm::perspective(glm::radians(45.0f), (float)(1280 / 720), 0.1f, 100.0f);
+        proj = glm::perspective(glm::radians(30.0f), (float)(1280 / 720), 0.1f, 100.0f);
 
         // Outputs the matrices into the Vertex Shader
         int modelLoc = glGetUniformLocation(shaderProgram.ID, "model");
@@ -148,6 +148,7 @@ int main() {
             const float rightEdge = edgeLimit; // Define according to your scene's coordinate system
             paddleState->x_pos = std::max(leftEdge, std::min(paddleState->x_pos, rightEdge));
         }
+
         // Paddle object location manipulation
         glm::mat4 PaddleModel = glm::mat4(1.0f);
         glm::mat4 PaddleView = glm::mat4(1.0f);
