@@ -96,5 +96,11 @@
     <Image Include="kanji.png">
       <Filter>Resource Files\textures</Filter>
     </Image>
+    <Image Include="C:\Users\Licht\Downloads\blue-neon.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
+    <Image Include="green-neon.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

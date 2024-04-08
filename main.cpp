@@ -57,7 +57,7 @@ int main() {
 
     // Texture initialization
     GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
-    Texture mario("face.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    Texture mario("green-neon.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     mario.texUnit(shaderProgram, "tex0", 0);
 
     glEnable(GL_DEPTH_TEST);
@@ -86,7 +86,7 @@ int main() {
 	EBO2.Unbind();
 
 	// Texture initialization
-    Texture cuboid("kanji.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    Texture cuboid("blue-neon.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	cuboid.texUnit(shaderProgram, "tex0", 0);
 
     static double lastTime = glfwGetTime();
