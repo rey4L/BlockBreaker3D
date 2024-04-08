@@ -9,4 +9,4 @@ This game is designed as a semester project and built with the intention of brin
 ## Acknowledgements
 
 - Special thanks to Victor Gordon, his OpenGL tutorial [videos](<https://www.youtube.com/watch?v=XpBGwZNyUh0&list=PLPaoO-vpZnumdcb4tZc4x5Q-v7CkrQ6M->) were an invaluable resource during development.
-- This project was inspired by classic block breaker games (e.g. the one that came preinstalled on old Blackberyy devices) but reimagined in a 3D space.
+- This project was inspired by classic block breaker games (e.g. the one that came preinstalled on old BlackBerry devices) but reimagined in a 3D space.
