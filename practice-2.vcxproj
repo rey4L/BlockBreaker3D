@@ -174,10 +174,8 @@
     <None Include="default.vert" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="block-tex.png" />
     <Image Include="C:\Users\Licht\Downloads\blue-neon.png" />
-    <Image Include="face.png" />
-    <Image Include="green-neon.png" />
-    <Image Include="kanji.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

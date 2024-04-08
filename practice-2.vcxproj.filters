@@ -90,16 +90,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="face.png">
-      <Filter>Resource Files\textures</Filter>
-    </Image>
-    <Image Include="kanji.png">
-      <Filter>Resource Files\textures</Filter>
-    </Image>
     <Image Include="C:\Users\Licht\Downloads\blue-neon.png">
       <Filter>Resource Files\textures</Filter>
     </Image>
-    <Image Include="green-neon.png">
+    <Image Include="block-tex.png">
       <Filter>Resource Files\textures</Filter>
     </Image>
   </ItemGroup>

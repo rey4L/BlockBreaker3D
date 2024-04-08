@@ -57,7 +57,7 @@ int main() {
 
     // Texture initialization
     GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
-    Texture mario("green-neon.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    Texture mario("block-tex.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     mario.texUnit(shaderProgram, "tex0", 0);
 
     glEnable(GL_DEPTH_TEST);
@@ -66,7 +66,7 @@ int main() {
     // Populate your cubes vector
     for (int row = 0; row < 3; ++row) {
         for (int col = 0; col < 9; ++col) {
-            cubes.emplace_back(glm::vec3(col * 0.5f - 0.5f, row * 0.5f + 0.8f, -3.0f), 0.695f);
+            cubes.emplace_back(glm::vec3(col * 0.5f - 0.5f, row * 0.5f + 0.8f, -3.0f), 0.70f);
         }
     }
 
