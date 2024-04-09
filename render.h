@@ -4,6 +4,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <algorithm>
 
 struct PaddleState {
 	float x_pos = -0.2f;
@@ -15,5 +16,6 @@ struct PaddleState {
 void key(GLFWwindow* window, int k, int s, int action, int mods);
 void updateRotation(float& rotation, double& prevTime, const double currentTime, const float rotationSpeed, const double timeInterval);
 void bounce(const double currentTime, double previousTime, float& gravity, float& position, float& velocity, float& damping, float& groundLevel, float& minimumVelocity, int& bounceCount, const int maxBounces);
+void updatePaddlePosition(PaddleState* paddleState, double deltaTime);
 
 #endif

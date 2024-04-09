@@ -8,14 +8,9 @@
 #include "block.h"
 #include "render.h"
 
-// Blocks postion within the window
-const float x = -1.5f;
-const float y = 0.3f;
-const float z = -8.0f;
-
 int main() {
     initializeGLFW();
-    GLFWwindow* window = createGLFWWindow(1280, 720, "O.O");
+    GLFWwindow* window = createGLFWWindow(1280, 720, "BrickBreaker3D");
     if (!window)
         return -1;
 
@@ -24,13 +19,6 @@ int main() {
     glfwSetWindowUserPointer(window, &paddleState);
 
     glfwSetKeyCallback(window, key);
-
-    // Window color values
-    float r, g, b;
-    r = 0.20;
-    g = 0.20;
-    b = 0.20;
-
     initializeGLAD();
 
     // Specify the viewport of OpenGL in the Window
@@ -121,7 +109,7 @@ int main() {
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
         // Scale all axes by 50%
-        glUniform1f(uniID, 0.5f);
+        glUniform1f(uniID, 0.45f);
 
         block.Bind();
 
@@ -139,16 +127,7 @@ int main() {
         lastTime = currentTime;
 
         PaddleState* paddleState = reinterpret_cast<PaddleState*>(glfwGetWindowUserPointer(window));
-        if (paddleState) {
-            float speed = 8.5f;
-            paddleState->x_pos += paddleState->direction * speed * deltaTime;
-
-            float edgeLimit = 1.5f;
-
-            const float leftEdge = -edgeLimit; 
-            const float rightEdge = edgeLimit; 
-            paddleState->x_pos = std::max(leftEdge, std::min(paddleState->x_pos, rightEdge));
-        }
+        updatePaddlePosition(paddleState, deltaTime);
 
         // Paddle object location manipulation
         glm::mat4 PaddleModel = glm::mat4(1.0f);

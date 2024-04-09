@@ -83,3 +83,18 @@ void bounce(const double currentTime, double previousTime, float& gravity, float
         }
     }
 }
+
+void updatePaddlePosition(PaddleState* paddleState, double deltaTime) {
+    if (paddleState == nullptr) return;
+
+    float speed = 8.5f; // Speed of paddle movement
+    float edgeLimit = 1.5f; // How far the paddle can go to the left or right
+    const float leftEdge = -edgeLimit;
+    const float rightEdge = edgeLimit;
+
+    // Update the paddle's position based on its direction and the speed
+    paddleState->x_pos += paddleState->direction * speed * deltaTime;
+
+    // Ensure the paddle doesn't move beyond the edges of the play area
+    paddleState->x_pos = std::max(leftEdge, std::min(paddleState->x_pos, rightEdge));
+}

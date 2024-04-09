@@ -11,6 +11,16 @@
 #include <vector>
 #include <algorithm>
 
+// Blocks postion within the window
+const float x = -1.5f;
+const float y = 0.3f;
+const float z = -8.0f;
+
+// Window color values
+const float r = 0.20;
+const float g = 0.20;
+const float b = 0.20;
+
 void initializeGLFW();
 GLFWwindow* createGLFWWindow(int width, int height, const char* title);
 void initializeGLAD();
