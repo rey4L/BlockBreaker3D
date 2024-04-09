@@ -6,6 +6,7 @@
 #include "Texture.h"
 #include "vertices.h"
 #include "block.h"
+#include "render.h"
 
 // Blocks postion within the window
 const float x = -1.5f;
@@ -57,8 +58,8 @@ int main() {
 
     // Texture initialization
     GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
-    Texture mario("block-tex.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    mario.texUnit(shaderProgram, "tex0", 0);
+    Texture block("block-tex.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    block.texUnit(shaderProgram, "tex0", 0);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -122,7 +123,7 @@ int main() {
         // Scale all axes by 50%
         glUniform1f(uniID, 0.5f);
 
-        mario.Bind();
+        block.Bind();
 
         // Bind the VAO so OpenGL knows to use it
         VAO1.Bind();
@@ -139,13 +140,13 @@ int main() {
 
         PaddleState* paddleState = reinterpret_cast<PaddleState*>(glfwGetWindowUserPointer(window));
         if (paddleState) {
-            float speed = 7.5f;
+            float speed = 8.5f;
             paddleState->x_pos += paddleState->direction * speed * deltaTime;
 
             float edgeLimit = 1.5f;
 
-            const float leftEdge = -edgeLimit; // Define according to your scene's coordinate system
-            const float rightEdge = edgeLimit; // Define according to your scene's coordinate system
+            const float leftEdge = -edgeLimit; 
+            const float rightEdge = edgeLimit; 
             paddleState->x_pos = std::max(leftEdge, std::min(paddleState->x_pos, rightEdge));
         }
 
@@ -187,7 +188,7 @@ int main() {
     VAO1.Delete();
     VBO1.Delete();
     EBO1.Delete();
-    mario.Delete();
+    block.Delete();
     VAO2.Delete();
     VBO2.Delete();
     EBO2.Delete();

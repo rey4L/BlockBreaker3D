@@ -13,7 +13,7 @@ public:
 	glm::vec3 position;
 	float scale;
 
-	Cube(glm::vec3 pos, float scl); //object setter
+	Cube(glm::vec3 pos, float scl); // Object setter
 	void render(Shader& shader, int& modelLoc, VAO& vao, const unsigned int* indices, size_t indicesSize);
 	bool collidesWith(glm::vec3 point);
 };

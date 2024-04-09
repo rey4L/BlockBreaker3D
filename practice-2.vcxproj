@@ -152,6 +152,7 @@
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="render.cpp" />
     <ClCompile Include="shaderClass.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="block.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="boilerPlate.h" />
+    <ClInclude Include="render.h" />
     <ClInclude Include="shaderClass.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VAO.h" />
