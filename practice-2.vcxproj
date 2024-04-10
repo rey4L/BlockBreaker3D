@@ -71,20 +71,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\UG\Year 3 Semester 2\CSE3200\practice-2\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\UG\Year 3 Semester 2\CSE3200\practice-2\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VS_ENV_VAR)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VS_ENV_VAR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>D:\UG\Year 3 Semester 2\CSE3200\practice-2\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\UG\Year 3 Semester 2\CSE3200\practice-2\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VS_ENV_VAR)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VS_ENV_VAR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\UG\Year 3 Semester 2\CSE3200\practice-2\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\UG\Year 3 Semester 2\CSE3200\practice-2\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VS_ENV_VAR)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VS_ENV_VAR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>D:\UG\Year 3 Semester 2\CSE3200\practice-2\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\UG\Year 3 Semester 2\CSE3200\practice-2\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VS_ENV_VAR)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(VS_ENV_VAR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
