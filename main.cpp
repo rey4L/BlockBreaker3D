@@ -140,7 +140,7 @@ int main() {
         
         // Translate the paddle
         PaddleView = glm::translate(PaddleView, glm::vec3(paddleState->x_pos, paddleState->y_pos, paddleState->z_pos));
-        PaddleProj = glm::perspective(glm::radians(45.0f), (float)(1000 / 1000), 0.1f, 100.0f);
+        PaddleProj = glm::perspective(glm::radians(30.0f), (float)(1000 / 1000), 0.1f, 100.0f);
 
         // Outputs the matrices into the Vertex Shader
         int PaddleModelLoc = glGetUniformLocation(shaderProgram.ID, "model");
