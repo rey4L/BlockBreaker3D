@@ -88,7 +88,7 @@ void updatePaddlePosition(PaddleState* paddleState, double deltaTime) {
     if (paddleState == nullptr) return;
 
     float speed = 8.5f; // Speed of paddle movement
-    float edgeLimit = 1.5f; // How far the paddle can go to the left or right
+    float edgeLimit = 1.9f; // How far the paddle can go to the left or right
     const float leftEdge = -edgeLimit;
     const float rightEdge = edgeLimit;
 
