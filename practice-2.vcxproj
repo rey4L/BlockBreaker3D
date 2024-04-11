@@ -178,6 +178,7 @@
   <ItemGroup>
     <Image Include="block-tex.png" />
     <Image Include="C:\Users\Licht\Downloads\blue-neon.png" />
+    <Image Include="circle.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

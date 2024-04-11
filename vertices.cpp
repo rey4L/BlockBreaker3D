@@ -1,5 +1,58 @@
 #include"vertices.h"
 
+// Function to generate sphere vertices and indices
+void generateSphere(float radius, unsigned int longitudeCount, unsigned int latitudeCount,
+    std::vector<float>& vertices, std::vector<unsigned int>& indices) {
+    vertices.clear();
+    indices.clear();
+
+    // Generate vertices
+    for (unsigned int lat = 0; lat <= latitudeCount; ++lat) {
+        float theta = lat * M_PI / latitudeCount;
+        float sinTheta = std::sin(theta);
+        float cosTheta = std::cos(theta);
+
+        for (unsigned int lon = 0; lon <= longitudeCount; ++lon) {
+            float phi = lon * 2 * M_PI / longitudeCount;
+            float sinPhi = std::sin(phi);
+            float cosPhi = std::cos(phi);
+
+            float x = cosPhi * sinTheta;
+            float y = cosTheta;
+            float z = sinPhi * sinTheta;
+            float u = 1.0f - (float(lon) / longitudeCount);
+            float v = 1.0f - (float(lat) / latitudeCount);
+            //float v = -(theta / M_PI);
+
+            if (lon == longitudeCount) {
+                u = 0.0f;
+            }
+
+            vertices.push_back(x * radius);
+            vertices.push_back(y * radius);
+            vertices.push_back(z * radius);
+            vertices.push_back(u);
+            vertices.push_back(v);
+        }
+    }
+
+    // Generate indices
+    for (unsigned int lat = 0; lat < latitudeCount; ++lat) {
+        for (unsigned int lon = 0; lon < longitudeCount; ++lon) {
+            unsigned int first = (lat * (longitudeCount + 1)) + lon;
+            unsigned int second = first + longitudeCount + 1;
+
+            indices.push_back(first);
+            indices.push_back(second);
+            indices.push_back(first + 1);
+
+            indices.push_back(second);
+            indices.push_back(second + 1);
+            indices.push_back(first + 1);
+        }
+    }
+}
+
 namespace Vertices {
     //Pyramid (diagnoal texture map)
     GLfloat diagonal_pyramid_vertices[40] =

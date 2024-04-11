@@ -51,11 +51,11 @@ void key(GLFWwindow* window, int k, int s, int action, int mods)
 
 
 // Function to update rotation
-void updateRotation(float& rotation, double& prevTime, const double currentTime, const float rotationSpeed, const double timeInterval) {
+void updateRotation(float& rotation, double& previousTime, const double currentTime, const float rotationSpeed, const double timeInterval) {
 
-    if (currentTime - prevTime >= timeInterval) {
+    if (currentTime - previousTime >= timeInterval) {
         rotation += rotationSpeed;
-        prevTime = currentTime;
+        previousTime = currentTime;
     }
 }
 
@@ -73,7 +73,7 @@ void bounce(const double currentTime, double previousTime, float& gravity, float
         position = groundLevel;
         if (abs(velocity) < minimumVelocity || bounceCount >= maxBounces)
         {
-            velocity = 5.5f;
+            velocity = 15.5f;
             position = groundLevel;
         }
         else

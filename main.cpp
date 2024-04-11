@@ -8,9 +8,19 @@
 #include "block.h"
 #include "render.h"
 
+// Translation matrix values
+const float tra_x = 0.0f;
+const float tra_y = 0.0f;
+const float tra_z = -11.5f; //-8.0f;
+
+// Rotation matrix values
+const float rot_x = 0.0f;
+const float rot_y = 0.0f;
+const float rot_z = 1.0f;
+
 int main() {
     initializeGLFW();
-    GLFWwindow* window = createGLFWWindow(1280, 720, "BrickBreaker3D");
+    GLFWwindow* window = createGLFWWindow(1500, 1250, "BrickBreaker3D");
     if (!window)
         return -1;
 
@@ -22,7 +32,7 @@ int main() {
     initializeGLAD();
 
     // Specify the viewport of OpenGL in the Window
-    setupViewport(1280, 720);
+    setupViewport(1500, 1500);
 
     // Compile shaders
     Shader shaderProgram("default.vert", "default.frag");
@@ -32,7 +42,7 @@ int main() {
 
     // Calls to renderer
     // Two triangle square
-    VBO VBO1(Vertices::square_cube_vertices, sizeof(Vertices::square_cube_vertices));
+    VBO VBO1(Vertices::cuboid_vertices, sizeof(Vertices::cuboid_vertices));
     EBO EBO1(Vertices::square_cube_indices, sizeof(Vertices::square_cube_indices));
 
     // Requisite method calls
@@ -53,9 +63,9 @@ int main() {
 
     std::vector<Cube> cubes;
     // Populate your cubes vector
-    for (int row = 0; row < 3; ++row) {
-        for (int col = 0; col < 9; ++col) {
-            cubes.emplace_back(glm::vec3(col * 0.5f - 0.5f, row * 0.5f + 0.8f, -3.0f), 0.70f);
+    for (int row = 0; row < 4; ++row) {
+        for (int col = 0; col < 8; ++col) {
+            cubes.emplace_back(glm::vec3(col * 0.7f - 3.4f, row * 0.3f + 1.8f, -3.0f), 0.45f);
         }
     }
 
@@ -78,7 +88,54 @@ int main() {
     Texture cuboid("blue-neon.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	cuboid.texUnit(shaderProgram, "tex0", 0);
 
-    static double lastTime = glfwGetTime();
+    // Adding the sphere
+
+    // Generate sphere vertices
+    float sphereRadius = 0.25f;
+    unsigned int longitudeCount = 1296; // More segments mean a smoother sphere
+    unsigned int latitudeCount = 648;
+    std::vector<float> sphereVertices;
+    std::vector<unsigned int> sphereIndices;
+    generateSphere(sphereRadius, longitudeCount, latitudeCount, sphereVertices, sphereIndices);
+
+	VAO VAO3;
+	VAO3.Bind();
+
+	VBO VBO3(sphereVertices.data(), sphereVertices.size() * sizeof(float));
+	EBO EBO3(sphereIndices.data(), sphereIndices.size() * sizeof(unsigned int));
+
+    //Link vertex attributes
+	VAO3.LinkAttrib(VBO3, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+	VAO3.LinkAttrib(VBO3, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+	VAO3.Unbind();
+	VBO3.Unbind();
+	EBO3.Unbind();
+
+    // Texture initialization
+    Texture sphere("circle.jpg", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	sphere.texUnit(shaderProgram, "tex0", 0);
+
+    glEnable(GL_DEPTH_TEST);
+
+    // Rotation parameters
+    float rotation = 0.0f;
+    double prevTime = glfwGetTime();
+    const float rotationSpeed = 1.5f;
+    const double timeInterval = 1.0 / 120.0;
+
+    // Bouncing constants
+    float position_y = 0.0f; // Initial Y position
+    float velocity_y = 5.0f; // Initial velocity upwards
+    float gravity = -9.8f; // Gravity pulling down
+    float groundLevel = -2.2f; // Y position of the ground
+    float damping = 0.9f; // To simulate energy loss on bounce
+    double deltaTime = 0; // Time difference between frames
+    float minVelocity = -2.0f; // Minimum velocity threshold
+    int bounceCount = 0;
+    const int maxBounces = 70;
+
+    double lastTime = glfwGetTime();
 
     // Main while loop
     while (!glfwWindowShouldClose(window)) {
@@ -91,12 +148,13 @@ int main() {
         // Tell OpenGL which Shader Program we want to use
         shaderProgram.Activate();
 
+        // -- Block related code --
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 proj = glm::mat4(1.0f);
 
         view = glm::translate(view, glm::vec3(x, y, z));
-        proj = glm::perspective(glm::radians(30.0f), (float)(1280 / 720), 0.1f, 100.0f);
+        proj = glm::perspective(glm::radians(30.0f), (float)(1000 / 1000), 0.1f, 100.0f);
 
         // Outputs the matrices into the Vertex Shader
         int modelLoc = glGetUniformLocation(shaderProgram.ID, "model");
@@ -109,7 +167,7 @@ int main() {
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
         // Scale all axes by 50%
-        glUniform1f(uniID, 0.45f);
+        glUniform1f(uniID, 0.5f);
 
         block.Bind();
 
@@ -121,7 +179,7 @@ int main() {
             cube.render(shaderProgram, modelLoc, VAO1, Vertices::square_cube_indices, sizeof(Vertices::square_cube_indices));
         }
         
-        // Clean this up
+        // -- Paddle related code --
         double currentTime = glfwGetTime();
         double deltaTime = currentTime - lastTime;
         lastTime = currentTime;
@@ -156,6 +214,33 @@ int main() {
         VAO2.Bind();
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
+        // -- Sphere related code --
+        double crntTime = glfwGetTime();
+        bounce(crntTime, prevTime, gravity, position_y, velocity_y, damping, groundLevel, minVelocity, bounceCount, maxBounces);
+        updateRotation(rotation, prevTime, crntTime, rotationSpeed, timeInterval);
+
+        glm::mat4 sphereModel = glm::mat4(1.0f);
+		glm::mat4 sphereView = glm::mat4(1.0f);
+		glm::mat4 sphereProj = glm::mat4(1.0f);
+
+		sphereModel = glm::rotate(sphereModel, glm::radians(rotation), glm::vec3(rot_x, rot_y, rot_z));
+        sphereView = glm::translate(sphereView, glm::vec3(tra_x, position_y, tra_z));
+        sphereProj = glm::perspective(glm::radians(30.0f), (float)(1000 / 1000), 0.1f, 100.0f);
+
+        int sphereModelLoc = glGetUniformLocation(shaderProgram.ID, "model");
+		glUniformMatrix4fv(sphereModelLoc, 1, GL_FALSE, glm::value_ptr(sphereModel));
+
+        int sphereViewLoc = glGetUniformLocation(shaderProgram.ID, "view");
+		glUniformMatrix4fv(sphereViewLoc, 1, GL_FALSE, glm::value_ptr(sphereView));
+
+        int sphereProjLoc = glGetUniformLocation(shaderProgram.ID, "proj");
+		glUniformMatrix4fv(sphereProjLoc, 1, GL_FALSE, glm::value_ptr(sphereProj));
+
+        sphere.Bind();
+		VAO3.Bind();
+        glDrawElements(GL_TRIANGLES, sphereIndices.size(), GL_UNSIGNED_INT, 0);
+
+
         // Swap the back buffer with the front buffer
         glfwSwapBuffers(window);
 
@@ -172,6 +257,10 @@ int main() {
     VBO2.Delete();
     EBO2.Delete();
     cuboid.Delete();
+    VAO3.Delete();
+	VBO3.Delete();
+	EBO3.Delete();
+	sphere.Delete();
     shaderProgram.Delete();
 
     // Delete window before ending the program

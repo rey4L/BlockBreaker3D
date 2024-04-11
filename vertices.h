@@ -1,6 +1,12 @@
 #ifndef VERTICES_CLASS_H
 #define VERTICES_CLASS_H
+
+#define _USE_MATH_DEFINES
 #include <GLFW/glfw3.h>
+#include <vector>
+#include <cmath>
+
+void generateSphere(float radius, unsigned int longitudeCount, unsigned int latitudeCount, std::vector<float>& vertices, std::vector<unsigned int>& indices);
 
 namespace Vertices {
     extern GLfloat diagonal_pyramid_vertices[40];

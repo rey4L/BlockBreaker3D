@@ -102,5 +102,8 @@
     <Image Include="block-tex.png">
       <Filter>Resource Files\textures</Filter>
     </Image>
+    <Image Include="circle.jpg">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
