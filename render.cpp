@@ -1,5 +1,7 @@
 #include "render.h"
 
+// Fall back implementation (will remove soon)
+// 
 // Close window upon ESC keypress
 //void key(GLFWwindow* window, int k, int s, int action, int mods)
 //{
@@ -73,7 +75,7 @@ void bounce(const double currentTime, double previousTime, float& gravity, float
         position = groundLevel;
         if (abs(velocity) < minimumVelocity || bounceCount >= maxBounces)
         {
-            velocity = 15.5f;
+            velocity = 3.5f;
             position = groundLevel;
         }
         else

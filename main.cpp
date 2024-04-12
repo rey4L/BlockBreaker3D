@@ -126,7 +126,7 @@ int main() {
 
     // Bouncing constants
     float position_y = 0.0f; // Initial Y position
-    float velocity_y = 5.0f; // Initial velocity upwards
+    float velocity_y = 7.5f; // Initial velocity upwards
     float gravity = -9.8f; // Gravity pulling down
     float groundLevel = -2.2f; // Y position of the ground
     float damping = 0.9f; // To simulate energy loss on bounce
