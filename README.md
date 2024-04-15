@@ -12,7 +12,7 @@ This repository uses an environment variable to manage paths in the Visual Studi
 
 ### Step 1: Define Your Environment Variable
 
-On your local machine, define an environment variable named `VS_ENV_VAR` that points to the root directory containing the `Libraries\include` and `Libraries\lib` directories. For example, if you have a directory structure like this:
+On your local machine, define an environment variable named `VS_ENV_VAR` that points to the `Libraries` folder. For example, if you have a directory structure like this:
 ```
 C:\MyProject
 │
@@ -20,7 +20,7 @@ C:\MyProject
     ├───include
     └───lib
 ```
-In this case, `C:\MyProject` is the root directory because it’s the base directory that contains the `Libraries\include` and `Libraries\lib` directories.
+`C:\MyProject\Libraries` is the directory you need to set the environment variable to.
 
 Here’s how to do it on Windows:
 
@@ -29,7 +29,7 @@ Here’s how to do it on Windows:
 3. Click on the result to open the System Properties dialog box.
 4. In the System Properties dialog, select the Environment Variables button.
 5. Under System Variables, click New.
-6. In the dialog that appears, enter `VS_ENV_VAR` as the Variable name and the path to the root directory as the Variable value.
+6. In the dialog that appears, enter `VS_ENV_VAR` as the Variable name and the path to the `Libraries` folder as the Variable value.
 7. Confirm your entry by clicking OK.
 
 **Important: The environment variable must be named `VS_ENV_VAR`. If you use a different name, it will overwrite the file and affect other users.**
