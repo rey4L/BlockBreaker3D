@@ -8,19 +8,19 @@
 #include "block.h"
 #include "render.h"
 
-// Translation matrix values
+// Translation matrix values for the ball
 const float tra_x = 0.0f;
 const float tra_y = 0.0f;
-const float tra_z = -11.5f; //-8.0f;
+const float tra_z = -13.0f; // z-value of the scene and paddle + z-value of the blocks;
 
-// Rotation matrix values
+// Rotation matrix values for the ball
 const float rot_x = 0.0f;
 const float rot_y = 0.0f;
 const float rot_z = 1.0f;
 
 int main() {
     initializeGLFW();
-    GLFWwindow* window = createGLFWWindow(1200, 1000, "BrickBreaker3D");
+    GLFWwindow* window = createGLFWWindow(750, 750, "BrickBreaker3D");
     if (!window)
         return -1;
 
@@ -32,7 +32,7 @@ int main() {
     initializeGLAD();
 
     // Specify the viewport of OpenGL in the Window
-    setupViewport(1200, 1200);
+    setupViewport(750, 750);
 
     // Compile shaders
     Shader shaderProgram("default.vert", "default.frag");
@@ -40,8 +40,7 @@ int main() {
     VAO VAO1;
     VAO1.Bind();
 
-    // Calls to renderer
-    // Two triangle square
+    // Cube primitive initialization
     VBO VBO1(Vertices::cuboid_vertices, sizeof(Vertices::cuboid_vertices));
     EBO EBO1(Vertices::square_cube_indices, sizeof(Vertices::square_cube_indices));
 
@@ -69,7 +68,7 @@ int main() {
         }
     }
 
-    //second shape
+    // Paddle primitive initialization
     VAO VAO2;
     VAO2.Bind();
 
@@ -128,7 +127,7 @@ int main() {
     float position_y = 0.0f; // Initial Y position
     float velocity_y = 7.5f; // Initial velocity upwards
     float gravity = -9.8f; // Gravity pulling down
-    float groundLevel = -2.2f; // Y position of the ground
+    float groundLevel = -2.7f; // Y position of the ground
     float damping = 0.9f; // To simulate energy loss on bounce
     double deltaTime = 0; // Time difference between frames
     float minVelocity = -2.0f; // Minimum velocity threshold
@@ -154,7 +153,7 @@ int main() {
         glm::mat4 proj = glm::mat4(1.0f);
 
         view = glm::translate(view, glm::vec3(x, y, z));
-        proj = glm::perspective(glm::radians(30.0f), (float)(1200 / 1200), 0.1f, 100.0f);
+        proj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
 
         // Outputs the matrices into the Vertex Shader
         int modelLoc = glGetUniformLocation(shaderProgram.ID, "model");
@@ -167,7 +166,7 @@ int main() {
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
         // Scale all axes by 50%
-        glUniform1f(uniID, 0.5f);
+        glUniform1f(uniID, 0.65f);
 
         block.Bind();
 
@@ -198,7 +197,7 @@ int main() {
         
         // Translate the paddle
         PaddleView = glm::translate(PaddleView, glm::vec3(paddleState->x_pos, paddleState->y_pos, paddleState->z_pos));
-        PaddleProj = glm::perspective(glm::radians(30.0f), (float)(1200 / 1200), 0.1f, 100.0f);
+        PaddleProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
 
         // Outputs the matrices into the Vertex Shader
         int PaddleModelLoc = glGetUniformLocation(shaderProgram.ID, "model");
@@ -225,7 +224,7 @@ int main() {
 
 		sphereModel = glm::rotate(sphereModel, glm::radians(rotation), glm::vec3(rot_x, rot_y, rot_z));
         sphereView = glm::translate(sphereView, glm::vec3(tra_x, position_y, tra_z));
-        sphereProj = glm::perspective(glm::radians(30.0f), (float)(1200 / 1200), 0.1f, 100.0f);
+        sphereProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
 
         int sphereModelLoc = glGetUniformLocation(shaderProgram.ID, "model");
 		glUniformMatrix4fv(sphereModelLoc, 1, GL_FALSE, glm::value_ptr(sphereModel));

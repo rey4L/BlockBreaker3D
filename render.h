@@ -7,9 +7,9 @@
 #include <algorithm>
 
 struct PaddleState {
-	float x_pos = -0.7f;
-	float y_pos = -2.2f;
-	float z_pos = -10.0f;
+	float x_pos = 3.0f;
+	float y_pos = -3.0f;
+	float z_pos = -13.0f;
 	float direction = 0.0f;
 };
 
