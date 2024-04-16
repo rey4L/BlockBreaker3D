@@ -57,6 +57,9 @@
     <ClCompile Include="render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="importer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boilerPlate.h">
@@ -86,6 +89,9 @@
     <ClInclude Include="render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="importer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
@@ -93,6 +99,15 @@
     </None>
     <None Include="default.vert">
       <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="model.frag">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="model.vert">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="box.ply">
+      <Filter>Resource Files\textures</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

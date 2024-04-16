@@ -7,6 +7,7 @@
 #include "vertices.h"
 #include "block.h"
 #include "render.h"
+#include "importer.h"
 
 // Translation matrix values for the ball
 const float tra_x = 0.0f;
@@ -17,6 +18,9 @@ const float tra_z = -13.0f; // z-value of the scene and paddle + z-value of the 
 const float rot_x = 0.0f;
 const float rot_y = 0.0f;
 const float rot_z = 1.0f;
+
+std::vector <unsigned int> paddle_indices;
+std::vector <float> paddle_vertices;
 
 int main() {
     initializeGLFW();
@@ -36,6 +40,7 @@ int main() {
 
     // Compile shaders
     Shader shaderProgram("default.vert", "default.frag");
+    Shader modelShader("model.vert", "model.frag");
 
     VAO VAO1;
     VAO1.Bind();
@@ -114,6 +119,25 @@ int main() {
     // Texture initialization
     Texture sphere("circle.jpg", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	sphere.texUnit(shaderProgram, "tex0", 0);
+
+    // Load model
+    loadModelFromFile("box.ply", paddle_vertices, paddle_indices);
+
+    VAO VAO4;
+	VAO4.Bind();
+
+	VBO VBO4(paddle_vertices.data(), paddle_vertices.size() * sizeof(float));
+	EBO EBO4(paddle_indices.data(), paddle_indices.size() * sizeof(unsigned int));
+
+	VAO4.LinkAttrib(VBO4, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+	VAO4.LinkAttrib(VBO4, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+	VAO4.Unbind();
+	VBO4.Unbind();
+	EBO4.Unbind();
+
+    Texture obj("block-tex.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    obj.texUnit(modelShader, "diffuseMap", 0);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -239,6 +263,30 @@ int main() {
 		VAO3.Bind();
         glDrawElements(GL_TRIANGLES, sphereIndices.size(), GL_UNSIGNED_INT, 0);
 
+        // -- Object related code --
+
+        modelShader.Activate();
+
+        glm::mat4 ObjModel = glm::mat4(1.0f);
+        glm::mat4 ObjView = glm::mat4(1.0f);
+        glm::mat4 ObjProj = glm::mat4(1.0f);
+
+        ObjView = glm::translate(ObjView, glm::vec3(1.7f, 0.75f, -10.0f));
+        ObjProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
+
+        // Outputs the matrices into the Vertex Shader
+        int ObjModelLoc = glGetUniformLocation(modelShader.ID, "model");
+        glUniformMatrix4fv(ObjModelLoc, 1, GL_FALSE, glm::value_ptr(ObjModel));
+
+        int ObjViewLoc = glGetUniformLocation(modelShader.ID, "view");
+        glUniformMatrix4fv(ObjViewLoc, 1, GL_FALSE, glm::value_ptr(ObjView));
+
+        int ObjProjLoc = glGetUniformLocation(modelShader.ID, "proj");
+        glUniformMatrix4fv(ObjProjLoc, 1, GL_FALSE, glm::value_ptr(ObjProj));
+
+        obj.Bind();
+        VAO4.Bind();
+        glDrawElements(GL_TRIANGLES, paddle_indices.size(), GL_UNSIGNED_INT, 0);
 
         // Swap the back buffer with the front buffer
         glfwSwapBuffers(window);
@@ -260,7 +308,12 @@ int main() {
 	VBO3.Delete();
 	EBO3.Delete();
 	sphere.Delete();
+	VAO4.Delete();
+	VBO4.Delete();
+	EBO4.Delete();
+	obj.Delete();
     shaderProgram.Delete();
+    modelShader.Delete();
 
     // Delete window before ending the program
     glfwDestroyWindow(window);
