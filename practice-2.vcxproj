@@ -175,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="box.ply" />
+    <None Include="colored-paddle.glb" />
     <None Include="default.frag" />
     <None Include="default.vert" />
     <None Include="model.frag" />

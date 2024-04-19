@@ -121,7 +121,7 @@ int main() {
 	sphere.texUnit(shaderProgram, "tex0", 0);
 
     // Load model
-    loadModelFromFile("box.ply", paddle_vertices, paddle_indices);
+    loadModelFromFile("models/colored_paddle.gltf", paddle_vertices, paddle_indices);
 
     VAO VAO4;
 	VAO4.Bind();

@@ -3,11 +3,11 @@
 
 // Function to load a model from a file
 bool loadModelFromFile(const std::string& filePath, std::vector<float>& vertices, std::vector<unsigned int>& indices) {
-    // Create an instance of the Importer
+
     Assimp::Importer importer;
 
-    // Read the file with some postprocessing
-    const aiScene* scene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs);
+    // Read the file 
+    const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_Triangulate | aiProcess_FlipUVs);
 
     // Check if the import was successful
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
