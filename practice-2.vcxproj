@@ -180,6 +180,7 @@
     <None Include="default.vert" />
     <None Include="model.frag" />
     <None Include="model.vert" />
+    <None Include="models\colored-paddle.gltf" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="block-tex.png" />

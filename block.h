@@ -12,10 +12,11 @@ class Cube {
 public:
 	glm::vec3 position;
 	float scale;
+	bool isDestroyed;
 
 	Cube(glm::vec3 pos, float scl); // Object setter
 	void render(Shader& shader, int& modelLoc, VAO& vao, const unsigned int* indices, size_t indicesSize);
-	bool collidesWith(glm::vec3 point);
+	bool collidesWith(glm::vec3 point, float radius);
 };
 
 #endif

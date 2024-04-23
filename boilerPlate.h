@@ -14,7 +14,7 @@
 // Blocks postion within the window
 const float x = 1.0f;
 const float y = 0.35f;
-const float z = -10.0f;
+const float z = -3.0f;
 
 // Window color values
 const float r = 0.20;

@@ -12,7 +12,7 @@
 // Translation matrix values for the ball
 const float tra_x = 0.0f;
 const float tra_y = 0.0f;
-const float tra_z = -13.0f; // z-value of the scene and paddle + z-value of the blocks;
+const float tra_z = -10.0f; // z-value of the scene and paddle + z-value of the blocks;
 
 // Rotation matrix values for the ball
 const float rot_x = 0.0f;
@@ -69,7 +69,7 @@ int main() {
     // Populate your cubes vector
     for (int row = 0; row < 4; ++row) {
         for (int col = 0; col < 8; ++col) {
-            cubes.emplace_back(glm::vec3(col * 0.7f - 3.4f, row * 0.3f + 1.8f, -3.0f), 0.45f);
+            cubes.emplace_back(glm::vec3(col * 0.7f - 3.4f, row * 0.3f + 1.8f, -10.0f), 0.45f);
         }
     }
 
@@ -121,7 +121,7 @@ int main() {
 	sphere.texUnit(shaderProgram, "tex0", 0);
 
     // Load model
-    loadModelFromFile("models/colored_paddle.gltf", paddle_vertices, paddle_indices);
+    loadModelFromFile("path", paddle_vertices, paddle_indices);
 
     VAO VAO4;
 	VAO4.Bind();
@@ -199,7 +199,17 @@ int main() {
 
         // Iterate through cubes and render them
         for (auto& cube : cubes) {
-            cube.render(shaderProgram, modelLoc, VAO1, Vertices::square_cube_indices, sizeof(Vertices::square_cube_indices));
+            if (!cube.isDestroyed) {
+                cube.render(shaderProgram, modelLoc, VAO1, Vertices::square_cube_indices, sizeof(Vertices::square_cube_indices));
+            }
+        }
+
+        // Check for collision between the sphere and the blocks
+        for (auto& cube : cubes) {
+            if (!cube.isDestroyed && cube.collidesWith(glm::vec3(tra_x, position_y, tra_z), sphereRadius)) {
+                cube.isDestroyed = true;
+                velocity_y = -velocity_y; // Reverse the velocity of the sphere
+            }
         }
         
         // -- Paddle related code --
@@ -265,28 +275,28 @@ int main() {
 
         // -- Object related code --
 
-        modelShader.Activate();
+        //modelShader.Activate();
 
-        glm::mat4 ObjModel = glm::mat4(1.0f);
-        glm::mat4 ObjView = glm::mat4(1.0f);
-        glm::mat4 ObjProj = glm::mat4(1.0f);
+        //glm::mat4 ObjModel = glm::mat4(1.0f);
+        //glm::mat4 ObjView = glm::mat4(1.0f);
+        //glm::mat4 ObjProj = glm::mat4(1.0f);
 
-        ObjView = glm::translate(ObjView, glm::vec3(1.7f, 0.75f, -10.0f));
-        ObjProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
+        //ObjView = glm::translate(ObjView, glm::vec3(1.7f, 0.75f, -25.0f));
+        //ObjProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
 
-        // Outputs the matrices into the Vertex Shader
-        int ObjModelLoc = glGetUniformLocation(modelShader.ID, "model");
-        glUniformMatrix4fv(ObjModelLoc, 1, GL_FALSE, glm::value_ptr(ObjModel));
+        //// Outputs the matrices into the Vertex Shader
+        //int ObjModelLoc = glGetUniformLocation(modelShader.ID, "model");
+        //glUniformMatrix4fv(ObjModelLoc, 1, GL_FALSE, glm::value_ptr(ObjModel));
 
-        int ObjViewLoc = glGetUniformLocation(modelShader.ID, "view");
-        glUniformMatrix4fv(ObjViewLoc, 1, GL_FALSE, glm::value_ptr(ObjView));
+        //int ObjViewLoc = glGetUniformLocation(modelShader.ID, "view");
+        //glUniformMatrix4fv(ObjViewLoc, 1, GL_FALSE, glm::value_ptr(ObjView));
 
-        int ObjProjLoc = glGetUniformLocation(modelShader.ID, "proj");
-        glUniformMatrix4fv(ObjProjLoc, 1, GL_FALSE, glm::value_ptr(ObjProj));
+        //int ObjProjLoc = glGetUniformLocation(modelShader.ID, "projection");
+        //glUniformMatrix4fv(ObjProjLoc, 1, GL_FALSE, glm::value_ptr(ObjProj));
 
-        obj.Bind();
-        VAO4.Bind();
-        glDrawElements(GL_TRIANGLES, paddle_indices.size(), GL_UNSIGNED_INT, 0);
+        //obj.Bind();
+        //VAO4.Bind();
+        //glDrawElements(GL_TRIANGLES, paddle_indices.size(), GL_UNSIGNED_INT, 0);
 
         // Swap the back buffer with the front buffer
         glfwSwapBuffers(window);

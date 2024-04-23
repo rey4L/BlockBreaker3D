@@ -112,6 +112,9 @@
     <None Include="colored-paddle.glb">
       <Filter>Resource Files\textures</Filter>
     </None>
+    <None Include="models\colored-paddle.gltf">
+      <Filter>Resource Files\textures</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="C:\Users\Licht\Downloads\blue-neon.png">
