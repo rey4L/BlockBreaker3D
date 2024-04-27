@@ -10,9 +10,9 @@
 #include "importer.h"
 
 // Translation matrix values for the ball
-const float tra_x = 0.0f;
-const float tra_y = 0.0f;
-const float tra_z = -10.0f; // z-value of the scene and paddle + z-value of the blocks;
+float tra_x = 1.0f;
+float tra_y = 0.35f;
+float tra_z = -10.0f; // z-value of the scene and paddle + z-value of the blocks;
 
 // Rotation matrix values for the ball
 const float rot_x = 0.0f;
@@ -141,24 +141,27 @@ int main() {
 
     glEnable(GL_DEPTH_TEST);
 
-    // Rotation parameters
+    // Rotation parameters (will be removed later)
     float rotation = 0.0f;
-    double prevTime = glfwGetTime();
-    const float rotationSpeed = 1.5f;
-    const double timeInterval = 1.0 / 120.0;
 
     // Bouncing constants
-    float position_y = 0.0f; // Initial Y position
-    float velocity_y = 7.5f; // Initial velocity upwards
-    float gravity = -9.8f; // Gravity pulling down
-    float groundLevel = -2.7f; // Y position of the ground
-    float damping = 0.9f; // To simulate energy loss on bounce
-    double deltaTime = 0; // Time difference between frames
-    float minVelocity = -2.0f; // Minimum velocity threshold
-    int bounceCount = 0;
-    const int maxBounces = 70;
+    float position_y = 1.0f; // Initial Y position
+    float groundLevel = -2.7f; // Y position of the ground;
 
     double lastTime = glfwGetTime();
+
+    // Ball velocity
+    float ball_velocity_x = 5.0f;
+    float ball_velocity_y = 5.0f;
+    float ball_velocity_z = 0.0f;
+
+    // Scene boundaries
+    float left_boundary = -2.5f;
+    float right_boundary = 2.5f;
+    float top_boundary = 2.5f;
+    float bottom_boundary = -2.0f;
+    float front_boundary = -15.0f;
+    float back_boundary = -5.0f;
 
     // Main while loop
     while (!glfwWindowShouldClose(window)) {
@@ -172,7 +175,7 @@ int main() {
         shaderProgram.Activate();
 
         // -- Block related code --
-        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 model = glm::mat4(1.0f); 
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 proj = glm::mat4(1.0f);
 
@@ -208,7 +211,16 @@ int main() {
         for (auto& cube : cubes) {
             if (!cube.isDestroyed && cube.collidesWith(glm::vec3(tra_x, position_y, tra_z), sphereRadius)) {
                 cube.isDestroyed = true;
-                velocity_y = -velocity_y; // Reverse the velocity of the sphere
+                //velocity_y = -velocity_y; // Reverse the velocity of the sphere
+
+                // Calculate the collision normal
+                glm::vec3 collisionNormal = glm::normalize(glm::vec3(tra_x, position_y, tra_z) - cube.position);
+
+                // Reflect the velocity of the sphere based on the collision normal
+                glm::vec3 reflectedVelocity = glm::reflect(glm::vec3(ball_velocity_x, ball_velocity_y, ball_velocity_z), collisionNormal);
+                ball_velocity_x = reflectedVelocity.x;
+                ball_velocity_y = reflectedVelocity.y;
+                ball_velocity_z = reflectedVelocity.z;
             }
         }
         
@@ -249,8 +261,6 @@ int main() {
 
         // -- Sphere related code --
         double crntTime = glfwGetTime();
-        bounce(crntTime, prevTime, gravity, position_y, velocity_y, damping, groundLevel, minVelocity, bounceCount, maxBounces);
-        updateRotation(rotation, prevTime, crntTime, rotationSpeed, timeInterval);
 
         glm::mat4 sphereModel = glm::mat4(1.0f);
 		glm::mat4 sphereView = glm::mat4(1.0f);
@@ -269,34 +279,25 @@ int main() {
         int sphereProjLoc = glGetUniformLocation(shaderProgram.ID, "proj");
 		glUniformMatrix4fv(sphereProjLoc, 1, GL_FALSE, glm::value_ptr(sphereProj));
 
+        // Update ball position
+        tra_x += ball_velocity_x * deltaTime;
+        position_y += ball_velocity_y * deltaTime;
+        tra_z += ball_velocity_z * deltaTime;
+
+        // Check for collisions with scene boundaries
+        if (tra_x <= left_boundary || tra_x >= right_boundary) {
+            ball_velocity_x = -ball_velocity_x;
+        }
+        if (position_y <= bottom_boundary || position_y >= top_boundary) {
+            ball_velocity_y = -ball_velocity_y;
+        }
+        if (tra_z <= front_boundary || tra_z >= back_boundary) {
+            ball_velocity_z = -ball_velocity_z;
+        }
+
         sphere.Bind();
 		VAO3.Bind();
         glDrawElements(GL_TRIANGLES, sphereIndices.size(), GL_UNSIGNED_INT, 0);
-
-        // -- Object related code --
-
-        //modelShader.Activate();
-
-        //glm::mat4 ObjModel = glm::mat4(1.0f);
-        //glm::mat4 ObjView = glm::mat4(1.0f);
-        //glm::mat4 ObjProj = glm::mat4(1.0f);
-
-        //ObjView = glm::translate(ObjView, glm::vec3(1.7f, 0.75f, -25.0f));
-        //ObjProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
-
-        //// Outputs the matrices into the Vertex Shader
-        //int ObjModelLoc = glGetUniformLocation(modelShader.ID, "model");
-        //glUniformMatrix4fv(ObjModelLoc, 1, GL_FALSE, glm::value_ptr(ObjModel));
-
-        //int ObjViewLoc = glGetUniformLocation(modelShader.ID, "view");
-        //glUniformMatrix4fv(ObjViewLoc, 1, GL_FALSE, glm::value_ptr(ObjView));
-
-        //int ObjProjLoc = glGetUniformLocation(modelShader.ID, "projection");
-        //glUniformMatrix4fv(ObjProjLoc, 1, GL_FALSE, glm::value_ptr(ObjProj));
-
-        //obj.Bind();
-        //VAO4.Bind();
-        //glDrawElements(GL_TRIANGLES, paddle_indices.size(), GL_UNSIGNED_INT, 0);
 
         // Swap the back buffer with the front buffer
         glfwSwapBuffers(window);
