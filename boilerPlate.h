@@ -17,9 +17,9 @@ const float y = 0.35f;
 const float z = -3.0f;
 
 // Window color values
-const float r = 0.20;
-const float g = 0.20;
-const float b = 0.20;
+const float r = 0.0;
+const float g = 0.0;
+const float b = 0.0;
 
 void initializeGLFW();
 GLFWwindow* createGLFWWindow(int width, int height, const char* title);

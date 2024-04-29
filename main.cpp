@@ -1,3 +1,4 @@
+#include "interface.h"
 #include "boilerPlate.h"
 #include "shaderClass.h"
 #include "VAO.h"
@@ -10,7 +11,7 @@
 #include "importer.h"
 
 // Translation matrix values for the ball
-float tra_x = 1.0f;
+float tra_x = 0.0f;
 float tra_y = 0.35f;
 float tra_z = -10.0f; // z-value of the scene and paddle + z-value of the blocks;
 
@@ -163,6 +164,15 @@ int main() {
     float front_boundary = -15.0f;
     float back_boundary = -5.0f;
 
+
+    //Initialize imgui
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+
     // Main while loop
     while (!glfwWindowShouldClose(window)) {
         // Specify the color of the background
@@ -208,21 +218,30 @@ int main() {
         }
 
         // Check for collision between the sphere and the blocks
-        for (auto& cube : cubes) {
-            if (!cube.isDestroyed && cube.collidesWith(glm::vec3(tra_x, position_y, tra_z), sphereRadius)) {
-                cube.isDestroyed = true;
-                //velocity_y = -velocity_y; // Reverse the velocity of the sphere
+        //for (auto& cube : cubes) {
+        //    if (!cube.isDestroyed && cube.collidesWith(glm::vec3(tra_x, position_y, tra_z), sphereRadius)) {
+        //        cube.isDestroyed = true;
+        //        //velocity_y = -velocity_y; // Reverse the velocity of the sphere
 
-                // Calculate the collision normal
-                glm::vec3 collisionNormal = glm::normalize(glm::vec3(tra_x, position_y, tra_z) - cube.position);
+        //        // Calculate the collision normal
+        //        glm::vec3 collisionPoint = glm::vec3(tra_x, position_y, tra_z);
+        //        glm::vec3 collisionNormal = glm::normalize(glm::vec3(tra_x, position_y, tra_z) - cube.position);
 
-                // Reflect the velocity of the sphere based on the collision normal
-                glm::vec3 reflectedVelocity = glm::reflect(glm::vec3(ball_velocity_x, ball_velocity_y, ball_velocity_z), collisionNormal);
-                ball_velocity_x = reflectedVelocity.x;
-                ball_velocity_y = reflectedVelocity.y;
-                ball_velocity_z = reflectedVelocity.z;
-            }
-        }
+        //        // Adjust the ball's position to prevent penetration
+        //        const float penetrationDepth = sphereRadius - glm::length(collisionPoint - cube.position);
+        //        tra_x += collisionNormal.x * penetrationDepth;
+        //        position_y += collisionNormal.y * penetrationDepth;
+        //        tra_z += collisionNormal.z * penetrationDepth;
+
+        //        // Reflect the velocity of the sphere based on the collision normal
+        //        glm::vec3 reflectedVelocity = glm::reflect(glm::vec3(ball_velocity_x, ball_velocity_y, ball_velocity_z), collisionNormal);
+        //        ball_velocity_x = reflectedVelocity.x;
+        //        ball_velocity_y = reflectedVelocity.y;
+        //        ball_velocity_z = reflectedVelocity.z;
+
+        //        cube.isDestroyed = true;
+        //    }
+        //}
         
         // -- Paddle related code --
         double currentTime = glfwGetTime();
@@ -279,25 +298,64 @@ int main() {
         int sphereProjLoc = glGetUniformLocation(shaderProgram.ID, "proj");
 		glUniformMatrix4fv(sphereProjLoc, 1, GL_FALSE, glm::value_ptr(sphereProj));
 
-        // Update ball position
-        tra_x += ball_velocity_x * deltaTime;
-        position_y += ball_velocity_y * deltaTime;
-        tra_z += ball_velocity_z * deltaTime;
+        // Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
-        // Check for collisions with scene boundaries
-        if (tra_x <= left_boundary || tra_x >= right_boundary) {
-            ball_velocity_x = -ball_velocity_x;
+        if (showMenu) {
+            renderMenu();
         }
-        if (position_y <= bottom_boundary || position_y >= top_boundary) {
-            ball_velocity_y = -ball_velocity_y;
-        }
-        if (tra_z <= front_boundary || tra_z >= back_boundary) {
-            ball_velocity_z = -ball_velocity_z;
+        else {
+            if (isPaused) {
+                renderPauseMenu();
+            }
+            else {
+
+                if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_P))) {
+                    isPaused = true;
+                }
+
+                // Update ball position
+                tra_x += ball_velocity_x * deltaTime;
+                position_y += ball_velocity_y * deltaTime;
+                tra_z += ball_velocity_z * deltaTime;
+
+                // Check for collisions with scene boundaries
+                if (tra_x <= left_boundary || tra_x >= right_boundary) {
+                    ball_velocity_x = -ball_velocity_x;
+                }
+                if (position_y <= bottom_boundary || position_y >= top_boundary) {
+                    ball_velocity_y = -ball_velocity_y;
+                }
+                if (tra_z <= front_boundary || tra_z >= back_boundary) {
+                    ball_velocity_z = -ball_velocity_z;
+                }
+
+
+                for (auto& cube : cubes) {
+                    if (!cube.isDestroyed && cube.collidesWith(glm::vec3(tra_x, position_y, tra_z), sphereRadius)) {
+                        cube.isDestroyed = true;
+
+                        // Calculate the collision normal
+                        glm::vec3 collisionNormal = glm::normalize(glm::vec3(tra_x, position_y, tra_z) - cube.position);
+
+                        // Reflect the velocity of the sphere based on the collision normal
+                        glm::vec3 reflectedVelocity = glm::reflect(glm::vec3(ball_velocity_x, ball_velocity_y, ball_velocity_z), collisionNormal);
+                        ball_velocity_x = reflectedVelocity.x;
+                        ball_velocity_y = reflectedVelocity.y;
+                        ball_velocity_z = reflectedVelocity.z;
+                    }
+                }
+            }
         }
 
         sphere.Bind();
 		VAO3.Bind();
         glDrawElements(GL_TRIANGLES, sphereIndices.size(), GL_UNSIGNED_INT, 0);
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // Swap the back buffer with the front buffer
         glfwSwapBuffers(window);
@@ -325,6 +383,11 @@ int main() {
 	obj.Delete();
     shaderProgram.Delete();
     modelShader.Delete();
+
+    // Cleanup Dear ImGui
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     // Delete window before ending the program
     glfwDestroyWindow(window);
