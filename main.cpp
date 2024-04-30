@@ -66,14 +66,6 @@ int main() {
 
     glEnable(GL_DEPTH_TEST);
 
-    std::vector<Cube> cubes;
-    // Populate your cubes vector
-    for (int row = 0; row < 4; ++row) {
-        for (int col = 0; col < 8; ++col) {
-            cubes.emplace_back(glm::vec3(col * 0.7f - 3.4f, row * 0.3f + 1.8f, -10.0f), 0.45f);
-        }
-    }
-
     // Paddle primitive initialization
     VAO VAO2;
     VAO2.Bind();
@@ -178,30 +170,20 @@ int main() {
         glm::vec3(0.0f, 1.0f, 0.5f),   // Greenish-cyan
         glm::vec3(0.5f, 1.0f, 0.0f),   // Yellowish-green
         glm::vec3(0.0f, 0.5f, 1.0f),   // Blueish-cyan
-        glm::vec3(0.5f, 0.0f, 0.0f),   // Dark red
-        glm::vec3(0.0f, 0.5f, 0.0f),   // Dark green
-        glm::vec3(0.0f, 0.0f, 0.5f),   // Dark blue
-        glm::vec3(0.5f, 0.5f, 0.0f),   // Dark yellow
-        glm::vec3(0.5f, 0.0f, 0.5f),   // Dark magenta
-        glm::vec3(0.0f, 0.5f, 0.5f),   // Dark cyan
-        glm::vec3(0.5f, 0.25f, 0.0f),  // Dark orange
-        glm::vec3(0.5f, 0.0f, 0.25f),  // Dark reddish-purple
-        glm::vec3(0.25f, 0.0f, 0.5f),  // Dark bluish-purple
-        glm::vec3(0.0f, 0.25f, 0.5f),  // Dark greenish-cyan
-        glm::vec3(0.25f, 0.5f, 0.0f),  // Dark yellowish-green
-        glm::vec3(0.0f, 0.5f, 0.25f),  // Dark blueish-cyan
-        glm::vec3(0.25f, 0.0f, 0.0f),  // Very dark red
-        glm::vec3(0.0f, 0.25f, 0.0f),  // Very dark green
-        glm::vec3(0.0f, 0.0f, 0.25f),  // Very dark blue
-        glm::vec3(0.25f, 0.25f, 0.0f), // Very dark yellow
-        glm::vec3(0.25f, 0.0f, 0.25f), // Very dark magenta
-        glm::vec3(0.0f, 0.25f, 0.25f), // Very dark cyan
-        glm::vec3(0.25f, 0.125f, 0.0f),// Very dark orange
-        glm::vec3(0.25f, 0.0f, 0.125f) // Very dark reddish-purple
     };
 
     // Define an index to keep track of the current color
     int currentColorIndex = 0; //changed
+
+    std::vector<Cube> cubes;
+
+    for (int row = 0; row < 4; ++row) {
+        for (int col = 0; col < 8; ++col) {
+            Cube cube(glm::vec3(col * 0.7f - 3.4f, row * 0.3f + 1.8f, -10.0f), 0.45f, cubeColors[currentColorIndex]);
+            currentColorIndex = (currentColorIndex + 1) % (sizeof(cubeColors) / sizeof(cubeColors[0]));
+            cubes.push_back(cube);
+        }
+    }
 
     //Initialize imgui
     IMGUI_CHECKVERSION();
@@ -291,12 +273,7 @@ int main() {
         // Iterate through cubes and render them
         for (auto& cube : cubes) {
             if (!cube.isDestroyed) {
-                // Use the current color for the cube
-                glm::vec3 cubeColor = cubeColors[currentColorIndex]; //changed
-                glUniform3fv(objectColorLoc, 1, glm::value_ptr(cubeColor)); //changed
-                // Increment the color index for the next cube changed
-                currentColorIndex = (currentColorIndex + 1) % (sizeof(cubeColors) / sizeof(cubeColors[0])); //changed
-
+                glUniform3fv(objectColorLoc, 1, glm::value_ptr(cube.color));
                 cube.render(shaderProgram, modelLoc, VAO1, Vertices::square_cube_indices, sizeof(Vertices::square_cube_indices));
             }
         }

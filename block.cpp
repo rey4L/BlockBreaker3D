@@ -1,6 +1,6 @@
 #include "block.h"
 
-Cube::Cube(glm::vec3 pos, float scl) : position(pos), scale(scl), isDestroyed(false) {}
+Cube::Cube(glm::vec3 pos, float scl, const glm::vec3& col) : position(pos), scale(scl), isDestroyed(false), color(col) {}
 
 void Cube::render(Shader& shader, int& modelLoc, VAO& vao, const unsigned int* indices, size_t indicesSize) {
     glm::mat4 model = glm::mat4(1.0f);
