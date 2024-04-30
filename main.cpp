@@ -164,6 +164,44 @@ int main() {
     float front_boundary = -15.0f;
     float back_boundary = -5.0f;
 
+    // Define an array of colors for the cubes changed 
+    glm::vec3 cubeColors[] = {
+        glm::vec3(1.0f, 0.0f, 0.0f),   // Red
+        glm::vec3(0.0f, 1.0f, 0.0f),   // Green
+        glm::vec3(0.0f, 0.0f, 1.0f),   // Blue
+        glm::vec3(1.0f, 1.0f, 0.0f),   // Yellow
+        glm::vec3(1.0f, 0.0f, 1.0f),   // Magenta
+        glm::vec3(0.0f, 1.0f, 1.0f),   // Cyan
+        glm::vec3(1.0f, 0.5f, 0.0f),   // Orange
+        glm::vec3(1.0f, 0.0f, 0.5f),   // Reddish-purple
+        glm::vec3(0.5f, 0.0f, 1.0f),   // Bluish-purple
+        glm::vec3(0.0f, 1.0f, 0.5f),   // Greenish-cyan
+        glm::vec3(0.5f, 1.0f, 0.0f),   // Yellowish-green
+        glm::vec3(0.0f, 0.5f, 1.0f),   // Blueish-cyan
+        glm::vec3(0.5f, 0.0f, 0.0f),   // Dark red
+        glm::vec3(0.0f, 0.5f, 0.0f),   // Dark green
+        glm::vec3(0.0f, 0.0f, 0.5f),   // Dark blue
+        glm::vec3(0.5f, 0.5f, 0.0f),   // Dark yellow
+        glm::vec3(0.5f, 0.0f, 0.5f),   // Dark magenta
+        glm::vec3(0.0f, 0.5f, 0.5f),   // Dark cyan
+        glm::vec3(0.5f, 0.25f, 0.0f),  // Dark orange
+        glm::vec3(0.5f, 0.0f, 0.25f),  // Dark reddish-purple
+        glm::vec3(0.25f, 0.0f, 0.5f),  // Dark bluish-purple
+        glm::vec3(0.0f, 0.25f, 0.5f),  // Dark greenish-cyan
+        glm::vec3(0.25f, 0.5f, 0.0f),  // Dark yellowish-green
+        glm::vec3(0.0f, 0.5f, 0.25f),  // Dark blueish-cyan
+        glm::vec3(0.25f, 0.0f, 0.0f),  // Very dark red
+        glm::vec3(0.0f, 0.25f, 0.0f),  // Very dark green
+        glm::vec3(0.0f, 0.0f, 0.25f),  // Very dark blue
+        glm::vec3(0.25f, 0.25f, 0.0f), // Very dark yellow
+        glm::vec3(0.25f, 0.0f, 0.25f), // Very dark magenta
+        glm::vec3(0.0f, 0.25f, 0.25f), // Very dark cyan
+        glm::vec3(0.25f, 0.125f, 0.0f),// Very dark orange
+        glm::vec3(0.25f, 0.0f, 0.125f) // Very dark reddish-purple
+    };
+
+    // Define an index to keep track of the current color
+    int currentColorIndex = 0; //changed
 
     //Initialize imgui
     IMGUI_CHECKVERSION();
@@ -181,8 +219,25 @@ int main() {
         // Clean the back buffer and assign the new color to it
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+        // Define colors for each object changed
+        glm::vec3 cubeColor = glm::vec3(1.0, 0.0, 0.0); // Red changed 
+        glm::vec3 paddleColor = glm::vec3(0.0, 1.0, 0.0); // Green changed 
+        glm::vec3 ballColor = glm::vec3(0.0, 0.0, 1.0); // Blue changed
+
+        glm::vec3 lightPos(1.0f, 2.0f, 2.0f);  // changed 
+        glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // changed 
+        glm::vec3 ambientColor(0.2f, 0.2f, 0.2f); // changed 
+        float ambientStrength = 0.3f; // changed 
+        float specularStrength = 0.5f; // changed 
+        float shininess = 64.0f; // changed 
+
+
         // Tell OpenGL which Shader Program we want to use
         shaderProgram.Activate();
+
+        // Set object color uniforms changed
+        int objectColorLoc = glGetUniformLocation(shaderProgram.ID, "objectColor"); //changed
 
         // -- Block related code --
         glm::mat4 model = glm::mat4(1.0f); 
@@ -202,6 +257,29 @@ int main() {
         int projLoc = glGetUniformLocation(shaderProgram.ID, "proj");
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
 
+        // Set lighting uniforms
+        int lightPosLoc = glGetUniformLocation(shaderProgram.ID, "lightPos");
+        glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
+
+        int lightColorLoc = glGetUniformLocation(shaderProgram.ID, "lightColor");
+        glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
+
+        int viewPosLoc = glGetUniformLocation(shaderProgram.ID, "viewPos");
+        glUniform3fv(viewPosLoc, 1, glm::value_ptr(glm::vec3(tra_x, position_y, tra_z))); // Assuming the camera follows the ball
+
+        int ambientColorLoc = glGetUniformLocation(shaderProgram.ID, "ambientColor");
+        glUniform3fv(ambientColorLoc, 1, glm::value_ptr(ambientColor));
+
+        int ambientStrengthLoc = glGetUniformLocation(shaderProgram.ID, "ambientStrength");
+        glUniform1f(ambientStrengthLoc, ambientStrength);
+
+        int specularStrengthLoc = glGetUniformLocation(shaderProgram.ID, "specularStrength");
+        glUniform1f(specularStrengthLoc, specularStrength);
+
+        int shininessLoc = glGetUniformLocation(shaderProgram.ID, "shininess");
+        glUniform1f(shininessLoc, shininess);
+
+
         // Scale all axes by 50%
         glUniform1f(uniID, 0.65f);
 
@@ -213,6 +291,12 @@ int main() {
         // Iterate through cubes and render them
         for (auto& cube : cubes) {
             if (!cube.isDestroyed) {
+                // Use the current color for the cube
+                glm::vec3 cubeColor = cubeColors[currentColorIndex]; //changed
+                glUniform3fv(objectColorLoc, 1, glm::value_ptr(cubeColor)); //changed
+                // Increment the color index for the next cube changed
+                currentColorIndex = (currentColorIndex + 1) % (sizeof(cubeColors) / sizeof(cubeColors[0])); //changed
+
                 cube.render(shaderProgram, modelLoc, VAO1, Vertices::square_cube_indices, sizeof(Vertices::square_cube_indices));
             }
         }
@@ -251,6 +335,9 @@ int main() {
         PaddleState* paddleState = reinterpret_cast<PaddleState*>(glfwGetWindowUserPointer(window));
         updatePaddlePosition(paddleState, deltaTime);
 
+        // Set paddle color uniform
+        glUniform3fv(objectColorLoc, 1, glm::value_ptr(paddleColor));
+
         // Paddle object location manipulation
         glm::mat4 PaddleModel = glm::mat4(1.0f);
         glm::mat4 PaddleView = glm::mat4(1.0f);
@@ -284,6 +371,10 @@ int main() {
         glm::mat4 sphereModel = glm::mat4(1.0f);
 		glm::mat4 sphereView = glm::mat4(1.0f);
 		glm::mat4 sphereProj = glm::mat4(1.0f);
+
+        // Set ball color uniform
+        glUniform3fv(objectColorLoc, 1, glm::value_ptr(ballColor)); //changed
+
 
 		sphereModel = glm::rotate(sphereModel, glm::radians(rotation), glm::vec3(rot_x, rot_y, rot_z));
         sphereView = glm::translate(sphereView, glm::vec3(tra_x, position_y, tra_z));
