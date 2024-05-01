@@ -8,26 +8,8 @@
 #include "vertices.h"
 #include "block.h"
 #include "render.h"
-#include "importer.h"
 #include <iostream>
 #include "irrKlang.h"
-//using namespace irrklang;
-//int main()
-//{
-//    ISoundEngine* engine = createIrrKlangDevice();
-//    if (!engine) {
-//        return 0;
-//       
-//    }
-//
-//    engine->play2D("media/getout.ogg", true);
-//    while (true)
-//    {
-//
-//    }
-//    engine->drop();
-//   
-//}
 
 // Translation matrix values for the ball
 float tra_x = 0.0f;
@@ -57,12 +39,6 @@ int main() {
     }
 
     engine->play2D("media/J.ogg", true);
-
-   /* while (true)
-    {
-
-    }
-    engine->drop();*/
   
     // Initialize shape state and set it as the window's user pointer
     PaddleState paddleState; // Make sure this persists in scope as long as it's needed
@@ -120,7 +96,7 @@ int main() {
     Texture cuboid("blue-neon.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	cuboid.texUnit(shaderProgram, "tex0", 0);
 
-    // Adding the sphere
+    //-- Adding the sphere --//
 
     // Generate sphere vertices
     float sphereRadius = 0.25f;
@@ -482,12 +458,6 @@ int main() {
  
     // Terminate GLFW before ending the program
     glfwTerminate();
-   
-   /* while (true)
-    {
 
-    }
-    engine->drop();*/
     return 0;
-
 }
