@@ -148,25 +148,6 @@ int main() {
     Texture sphere("circle.jpg", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	sphere.texUnit(shaderProgram, "tex0", 0);
 
-    // Load model
-    loadModelFromFile("path", paddle_vertices, paddle_indices);
-
-    VAO VAO4;
-	VAO4.Bind();
-
-	VBO VBO4(paddle_vertices.data(), paddle_vertices.size() * sizeof(float));
-	EBO EBO4(paddle_indices.data(), paddle_indices.size() * sizeof(unsigned int));
-
-	VAO4.LinkAttrib(VBO4, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
-	VAO4.LinkAttrib(VBO4, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-
-	VAO4.Unbind();
-	VBO4.Unbind();
-	EBO4.Unbind();
-
-    Texture obj("block-tex.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    obj.texUnit(modelShader, "diffuseMap", 0);
-
     glEnable(GL_DEPTH_TEST);
 
     // Rotation parameters (will be removed later)
@@ -487,10 +468,6 @@ int main() {
 	VBO3.Delete();
 	EBO3.Delete();
 	sphere.Delete();
-	VAO4.Delete();
-	VBO4.Delete();
-	EBO4.Delete();
-	obj.Delete();
     shaderProgram.Delete();
     modelShader.Delete();
    
