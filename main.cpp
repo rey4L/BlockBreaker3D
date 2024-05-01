@@ -9,6 +9,25 @@
 #include "block.h"
 #include "render.h"
 #include "importer.h"
+#include <iostream>
+#include "irrKlang.h"
+//using namespace irrklang;
+//int main()
+//{
+//    ISoundEngine* engine = createIrrKlangDevice();
+//    if (!engine) {
+//        return 0;
+//       
+//    }
+//
+//    engine->play2D("media/getout.ogg", true);
+//    while (true)
+//    {
+//
+//    }
+//    engine->drop();
+//   
+//}
 
 // Translation matrix values for the ball
 float tra_x = 0.0f;
@@ -22,13 +41,29 @@ const float rot_z = 1.0f;
 
 std::vector <unsigned int> paddle_indices;
 std::vector <float> paddle_vertices;
-
+using namespace irrklang;
 int main() {
+ 
     initializeGLFW();
     GLFWwindow* window = createGLFWWindow(750, 750, "BrickBreaker3D");
     if (!window)
         return -1;
 
+
+    ISoundEngine* engine = createIrrKlangDevice();
+    if (!engine) {
+        return 0;
+
+    }
+
+    engine->play2D("media/J.ogg", true);
+
+   /* while (true)
+    {
+
+    }
+    engine->drop();*/
+  
     // Initialize shape state and set it as the window's user pointer
     PaddleState paddleState; // Make sure this persists in scope as long as it's needed
     glfwSetWindowUserPointer(window, &paddleState);
@@ -184,7 +219,7 @@ int main() {
             cubes.push_back(cube);
         }
     }
-
+   
     //Initialize imgui
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -200,7 +235,8 @@ int main() {
 
         // Clean the back buffer and assign the new color to it
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        
+        
 
         // Define colors for each object changed
         glm::vec3 cubeColor = glm::vec3(1.0, 0.0, 0.0); // Red changed 
@@ -392,6 +428,7 @@ int main() {
                 // Check for collisions with scene boundaries
                 if (tra_x <= left_boundary || tra_x >= right_boundary) {
                     ball_velocity_x = -ball_velocity_x;
+                    
                 }
                 if (position_y <= bottom_boundary || position_y >= top_boundary) {
                     ball_velocity_y = -ball_velocity_y;
@@ -402,9 +439,10 @@ int main() {
 
 
                 for (auto& cube : cubes) {
+                   
                     if (!cube.isDestroyed && cube.collidesWith(glm::vec3(tra_x, position_y, tra_z), sphereRadius)) {
                         cube.isDestroyed = true;
-
+                        engine->play2D("media/collision.wav", false);
                         // Calculate the collision normal
                         glm::vec3 collisionNormal = glm::normalize(glm::vec3(tra_x, position_y, tra_z) - cube.position);
 
@@ -413,6 +451,8 @@ int main() {
                         ball_velocity_x = reflectedVelocity.x;
                         ball_velocity_y = reflectedVelocity.y;
                         ball_velocity_z = reflectedVelocity.z;
+                      
+                       
                     }
                 }
             }
@@ -430,8 +470,10 @@ int main() {
 
         // Take care of all GLFW events
         glfwPollEvents();
-    }
 
+      
+    }
+  
     // Delete all objects created
     VAO1.Delete();
     VBO1.Delete();
@@ -451,17 +493,24 @@ int main() {
 	obj.Delete();
     shaderProgram.Delete();
     modelShader.Delete();
-
+   
+    engine->drop();
     // Cleanup Dear ImGui
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-
+ 
     // Delete window before ending the program
     glfwDestroyWindow(window);
-
+ 
     // Terminate GLFW before ending the program
     glfwTerminate();
+   
+   /* while (true)
+    {
 
+    }
+    engine->drop();*/
     return 0;
+
 }
