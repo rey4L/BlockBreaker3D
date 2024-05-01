@@ -9,7 +9,7 @@
 #include "block.h"
 #include "render.h"
 #include <iostream>
-#include "irrKlang.h"
+#include "audio.h"
 
 // Translation matrix values for the ball
 float tra_x = 0.0f;
@@ -23,7 +23,7 @@ const float rot_z = 1.0f;
 
 std::vector <unsigned int> paddle_indices;
 std::vector <float> paddle_vertices;
-using namespace irrklang;
+
 int main() {
  
     initializeGLFW();
@@ -31,14 +31,8 @@ int main() {
     if (!window)
         return -1;
 
-
-    ISoundEngine* engine = createIrrKlangDevice();
-    if (!engine) {
-        return 0;
-
-    }
-
-    engine->play2D("media/J.ogg", true);
+    Audio audio;
+    audio.playBackgroundMusic();
   
     // Initialize shape state and set it as the window's user pointer
     PaddleState paddleState; // Make sure this persists in scope as long as it's needed
@@ -399,7 +393,7 @@ int main() {
                    
                     if (!cube.isDestroyed && cube.collidesWith(glm::vec3(tra_x, position_y, tra_z), sphereRadius)) {
                         cube.isDestroyed = true;
-                        engine->play2D("media/collision.wav", false);
+                        audio.playCollisionSound();
                         // Calculate the collision normal
                         glm::vec3 collisionNormal = glm::normalize(glm::vec3(tra_x, position_y, tra_z) - cube.position);
 
@@ -446,8 +440,7 @@ int main() {
 	sphere.Delete();
     shaderProgram.Delete();
     modelShader.Delete();
-   
-    engine->drop();
+
     // Cleanup Dear ImGui
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

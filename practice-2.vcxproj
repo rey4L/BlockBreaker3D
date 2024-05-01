@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="audio.cpp" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="boilerPlate.cpp" />
     <ClCompile Include="EBO.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="vertices.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="audio.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="boilerPlate.h" />
