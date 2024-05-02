@@ -8,6 +8,9 @@
 extern bool showMenu;
 extern bool isPaused;
 
+extern float backgroundMusicVolume;
+extern float soundEffectsVolume;
+
 void renderMenu();
 void renderPauseMenu();
 

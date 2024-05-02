@@ -3,6 +3,9 @@
 bool showMenu = true;
 bool isPaused = false;
 
+float backgroundMusicVolume = 1.0f;
+float soundEffectsVolume = 1.0f;
+
 void renderMenu() {
     ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
     ImGui::SetWindowSize(ImVec2(300, 250));
@@ -27,12 +30,52 @@ void renderMenu() {
     ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.5f);
 
     ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
-    if (ImGui::Button("OPTIONS", buttonSize)) {
-        // Add code to handle options menu
+    if (ImGui::Button("SOUND", buttonSize)) {
+        ImGui::OpenPopup("Sound Settings");
     }
-    ImGui::SetCursorPosX((windowWidth - ImGui::CalcTextSize("Options").x) * 0.5f);
+    ImGui::SetCursorPosX((windowWidth - ImGui::CalcTextSize("Sound").x) * 0.5f);
 
     ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.65f);
+
+    // Sound settings window
+    if (ImGui::BeginPopupModal("Sound Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+        // Set the desired width of the popup window
+        float popupWidth = 215.0f;
+        ImGui::SetNextWindowSize(ImVec2(popupWidth, 0.0f));
+
+        // Add spacing between the title and the first slider
+        ImGui::Spacing();
+
+        // Background Music Volume Slider
+        ImGui::SetCursorPosX((popupWidth - 200.0f) * 0.5f); 
+        ImGui::Text("Background Music Volume");
+        ImGui::SetCursorPosX((popupWidth - 200.0f) * 0.5f); 
+        ImGui::PushItemWidth(200.0f);
+        ImGui::SliderFloat("##bgVolume", &backgroundMusicVolume, 0.0f, 1.0f);
+        ImGui::PopItemWidth();
+
+        // Add spacing between the sliders
+        ImGui::Spacing();
+
+        // Sound Effects Volume Slider
+        ImGui::SetCursorPosX((popupWidth - 200.0f) * 0.5f); 
+        ImGui::Text("Sound Effects Volume");
+        ImGui::SetCursorPosX((popupWidth - 200.0f) * 0.5f); 
+        ImGui::PushItemWidth(200.0f);
+        ImGui::SliderFloat("##sfxVolume", &soundEffectsVolume, 0.0f, 1.0f);
+        ImGui::PopItemWidth();
+
+        // Add spacing between the last slider and the close button
+        ImGui::Spacing();
+
+        // Center the close button
+        ImGui::SetCursorPosX((popupWidth - ImGui::CalcTextSize("Close").x) * 0.5f);
+        if (ImGui::Button("Close")) {
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
+    }
 
     ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
     if (ImGui::Button("QUIT", buttonSize)) {

@@ -360,6 +360,8 @@ int main() {
 
         if (showMenu) {
             renderMenu();
+            audio.setBackgroundMusicVolume(backgroundMusicVolume);
+            audio.setSoundEffectsVolume(soundEffectsVolume);
         }
         else {
             if (isPaused) {
