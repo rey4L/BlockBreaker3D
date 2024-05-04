@@ -10,6 +10,8 @@
 #include "render.h"
 #include <iostream>
 #include "audio.h"
+#include <random> // Add this header for random number generation
+
 
 // Translation matrix values for the ball
 float tra_x = 0.0f;
@@ -23,6 +25,21 @@ const float rot_z = 1.0f;
 
 std::vector <unsigned int> paddle_indices;
 std::vector <float> paddle_vertices;
+
+// Function to apply a power-up to a random block
+void applyPowerUp(std::vector<Cube>& cubes) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, cubes.size() - 1);
+
+    int randomIndex = dis(gen);
+
+    if (!cubes[randomIndex].isDestroyed) {
+        // Apply power-up logic here
+        cubes[randomIndex].color = glm::vec3(1.0f, 1.0f, 1.0f); // White
+    }
+}
+
 
 int main() {
  
@@ -398,6 +415,9 @@ int main() {
                         audio.playCollisionSound();
                         // Calculate the collision normal
                         glm::vec3 collisionNormal = glm::normalize(glm::vec3(tra_x, position_y, tra_z) - cube.position);
+
+                        // Inside the game loop
+                        applyPowerUp(cubes);
 
                         // Reflect the velocity of the sphere based on the collision normal
                         glm::vec3 reflectedVelocity = glm::reflect(glm::vec3(ball_velocity_x, ball_velocity_y, ball_velocity_z), collisionNormal);
