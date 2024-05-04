@@ -187,8 +187,6 @@ int main() {
         // Clean the back buffer and assign the new color to it
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        
-
         // Define colors for each object changed
         glm::vec3 cubeColor = glm::vec3(1.0, 0.0, 0.0); // Red changed 
         glm::vec3 paddleColor = glm::vec3(0.0, 1.0, 0.0); // Green changed 
@@ -378,15 +376,17 @@ int main() {
                 position_y += ball_velocity_y * deltaTime;
                 tra_z += ball_velocity_z * deltaTime;
 
+                const float collisionBuffer = 0.1f;
+
                 // Check for collisions with scene boundaries
-                if (tra_x <= left_boundary || tra_x >= right_boundary) {
+                if (tra_x <= left_boundary + collisionBuffer || tra_x >= right_boundary - collisionBuffer) {
                     ball_velocity_x = -ball_velocity_x;
                     
                 }
-                if (position_y <= bottom_boundary || position_y >= top_boundary) {
+                if (position_y <= bottom_boundary + collisionBuffer || position_y >= top_boundary - collisionBuffer) {
                     ball_velocity_y = -ball_velocity_y;
                 }
-                if (tra_z <= front_boundary || tra_z >= back_boundary) {
+                if (tra_z <= front_boundary + collisionBuffer || tra_z >= back_boundary - collisionBuffer) {
                     ball_velocity_z = -ball_velocity_z;
                 }
 
@@ -404,8 +404,6 @@ int main() {
                         ball_velocity_x = reflectedVelocity.x;
                         ball_velocity_y = reflectedVelocity.y;
                         ball_velocity_z = reflectedVelocity.z;
-                      
-                       
                     }
                 }
             }
@@ -422,9 +420,7 @@ int main() {
         glfwSwapBuffers(window);
 
         // Take care of all GLFW events
-        glfwPollEvents();
-
-      
+        glfwPollEvents();   
     }
   
     // Delete all objects created
