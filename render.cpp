@@ -89,8 +89,8 @@ void bounce(const double currentTime, double previousTime, float& gravity, float
 void updatePaddlePosition(PaddleState* paddleState, double deltaTime) {
     if (paddleState == nullptr) return;
 
-    float speed = 8.5f; // Speed of paddle movement
-    float edgeLimit = 2.25f; // How far the paddle can go to the left or right
+    float speed = 10.0f; // Speed of paddle movement
+    float edgeLimit = 3.0f; // How far the paddle can go to the left or right
     const float leftEdge = -edgeLimit;
     const float rightEdge = edgeLimit;
 

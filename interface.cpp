@@ -3,7 +3,7 @@
 bool showMenu = true;
 bool isPaused = false;
 
-float backgroundMusicVolume = 1.0f;
+float backgroundMusicVolume = 0.025f;
 float soundEffectsVolume = 1.0f;
 
 void renderMenu() {

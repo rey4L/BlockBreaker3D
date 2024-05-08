@@ -37,7 +37,7 @@ bool Cube::collidesWith(glm::vec3 point, float radius) {
     glm::vec3 normal = glm::normalize(point - closestPoint);
     float distance = glm::length(point - closestPoint);
 
-    if (distance < radius) {
+    if (distance <= radius) {
         isDestroyed = true;
         return true;
     }

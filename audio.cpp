@@ -4,7 +4,7 @@
 Audio::Audio() {
     engine = irrklang::createIrrKlangDevice();
     backgroundMusic = nullptr;
-    backgroundMusicVolume = 1.0f;
+    backgroundMusicVolume = 0.025f;
     soundEffectsVolume = 1.0f;
 }
 

@@ -12,9 +12,9 @@
 #include <algorithm>
 
 // Blocks postion within the window
-const float x = 1.0f;
-const float y = 0.35f;
-const float z = -3.0f;
+const float x = 1.1220f;
+const float y = 0.5f;
+const float z = -2.5f;
 
 // Window color values
 const float r = 0.1;

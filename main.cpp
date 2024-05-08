@@ -44,7 +44,7 @@ void applyPowerUp(std::vector<Cube>& cubes) {
 int main() {
  
     initializeGLFW();
-    GLFWwindow* window = createGLFWWindow(750, 750, "BrickBreaker3D");
+    GLFWwindow* window = createGLFWWindow(760, 760, "BrickBreaker3D");
     if (!window)
         return -1;
 
@@ -137,12 +137,9 @@ int main() {
 
     glEnable(GL_DEPTH_TEST);
 
-    // Rotation parameters (will be removed later)
-    float rotation = 0.0f;
-
     // Bouncing constants
     float position_y = 1.0f; // Initial Y position
-    float groundLevel = -2.7f; // Y position of the ground;
+    //float groundLevel = -2.7f; // Y position of the ground;
 
     double lastTime = glfwGetTime();
 
@@ -152,10 +149,10 @@ int main() {
     float ball_velocity_z = 0.0f;
 
     // Scene boundaries
-    float left_boundary = -2.5f;
+    float left_boundary = -3.25f;
     float right_boundary = 2.5f;
     float top_boundary = 2.5f;
-    float bottom_boundary = -2.0f;
+    float bottom_boundary = -3.5f;
     float front_boundary = -15.0f;
     float back_boundary = -5.0f;
 
@@ -203,7 +200,7 @@ int main() {
 
         // Clean the back buffer and assign the new color to it
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+
         // Define colors for each object changed
         glm::vec3 cubeColor = glm::vec3(1.0, 0.0, 0.0); // Red changed 
         glm::vec3 paddleColor = glm::vec3(0.0, 1.0, 0.0); // Green changed 
@@ -224,7 +221,7 @@ int main() {
         int objectColorLoc = glGetUniformLocation(shaderProgram.ID, "objectColor"); //changed
 
         // -- Block related code --
-        glm::mat4 model = glm::mat4(1.0f); 
+        glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 proj = glm::mat4(1.0f);
 
@@ -264,7 +261,7 @@ int main() {
         glUniform1f(shininessLoc, shininess);
 
 
-        // Scale all axes by 50%
+        // Scale all axes by 65%
         glUniform1f(uniID, 0.65f);
 
         block.Bind();
@@ -305,7 +302,7 @@ int main() {
         //        cube.isDestroyed = true;
         //    }
         //}
-        
+
         // -- Paddle related code --
         double currentTime = glfwGetTime();
         double deltaTime = currentTime - lastTime;
@@ -325,9 +322,11 @@ int main() {
         if (paddleState == nullptr) {
             exit(EXIT_FAILURE);
         }
-        
+
+        glm::vec3 paddlePos = glm::vec3(paddleState->x_pos, paddleState->y_pos, paddleState->z_pos);
+
         // Translate the paddle
-        PaddleView = glm::translate(PaddleView, glm::vec3(paddleState->x_pos, paddleState->y_pos, paddleState->z_pos));
+        PaddleView = glm::translate(PaddleView, paddlePos);
         PaddleProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
 
         // Outputs the matrices into the Vertex Shader
@@ -346,27 +345,27 @@ int main() {
 
         // -- Sphere related code --
         double crntTime = glfwGetTime();
+        glm::vec3 spherePosition = glm::vec3(tra_x, position_y, tra_z);
 
         glm::mat4 sphereModel = glm::mat4(1.0f);
-		glm::mat4 sphereView = glm::mat4(1.0f);
-		glm::mat4 sphereProj = glm::mat4(1.0f);
+        glm::mat4 sphereView = glm::mat4(1.0f);
+        glm::mat4 sphereProj = glm::mat4(1.0f);
 
         // Set ball color uniform
         glUniform3fv(objectColorLoc, 1, glm::value_ptr(ballColor)); //changed
 
-
-		sphereModel = glm::rotate(sphereModel, glm::radians(rotation), glm::vec3(rot_x, rot_y, rot_z));
-        sphereView = glm::translate(sphereView, glm::vec3(tra_x, position_y, tra_z));
+        //sphereModel = glm::rotate(sphereModel, glm::radians(rotation), glm::vec3(rot_x, rot_y, rot_z));
+        sphereView = glm::translate(sphereView, spherePosition);
         sphereProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
 
         int sphereModelLoc = glGetUniformLocation(shaderProgram.ID, "model");
-		glUniformMatrix4fv(sphereModelLoc, 1, GL_FALSE, glm::value_ptr(sphereModel));
+        glUniformMatrix4fv(sphereModelLoc, 1, GL_FALSE, glm::value_ptr(sphereModel));
 
         int sphereViewLoc = glGetUniformLocation(shaderProgram.ID, "view");
-		glUniformMatrix4fv(sphereViewLoc, 1, GL_FALSE, glm::value_ptr(sphereView));
+        glUniformMatrix4fv(sphereViewLoc, 1, GL_FALSE, glm::value_ptr(sphereView));
 
         int sphereProjLoc = glGetUniformLocation(shaderProgram.ID, "proj");
-		glUniformMatrix4fv(sphereProjLoc, 1, GL_FALSE, glm::value_ptr(sphereProj));
+        glUniformMatrix4fv(sphereProjLoc, 1, GL_FALSE, glm::value_ptr(sphereProj));
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -394,36 +393,110 @@ int main() {
                 tra_z += ball_velocity_z * deltaTime;
 
                 const float collisionBuffer = 0.1f;
+                float paddleWidth = 1.0f; 
+                float paddleHeight = 0.25f; 
+                float paddleDepth = 0.5f;
 
                 // Check for collisions with scene boundaries
-                if (tra_x <= left_boundary + collisionBuffer || tra_x >= right_boundary - collisionBuffer) {
+                /*if (tra_x <= left_boundary + collisionBuffer || tra_x >= right_boundary - collisionBuffer) {
                     ball_velocity_x = -ball_velocity_x;
-                    
+
                 }
                 if (position_y <= bottom_boundary + collisionBuffer || position_y >= top_boundary - collisionBuffer) {
                     ball_velocity_y = -ball_velocity_y;
                 }
                 if (tra_z <= front_boundary + collisionBuffer || tra_z >= back_boundary - collisionBuffer) {
                     ball_velocity_z = -ball_velocity_z;
+                }*/
+
+                if (tra_x <= left_boundary + collisionBuffer) {
+                    tra_x = left_boundary + collisionBuffer;  // Correct position if boundary is crossed
+                    ball_velocity_x = -ball_velocity_x;
+                }
+                if (tra_x >= right_boundary - collisionBuffer) {
+                    tra_x = right_boundary - collisionBuffer;  // Correct position if boundary is crossed
+                    ball_velocity_x = -ball_velocity_x;
                 }
 
+                //if (position_y <= bottom_boundary + collisionBuffer) {
+                //    position_y = bottom_boundary + collisionBuffer;  // Adjust position to correct upon boundary collision
+                //    ball_velocity_y = -ball_velocity_y;
+                //}
+
+                if (position_y <= bottom_boundary + collisionBuffer) {
+                    std::cout << "Bottom collision" << std::endl;
+                    break;
+                }
+
+                if (position_y >= top_boundary - collisionBuffer) {
+                    position_y = top_boundary - collisionBuffer;  // Adjust position to correct upon boundary collision
+                    ball_velocity_y = -ball_velocity_y;
+                }
+
+                if (tra_z <= front_boundary + collisionBuffer) {
+                    tra_z = front_boundary + collisionBuffer;  // Adjust position to correct upon boundary collision
+                    ball_velocity_z = -ball_velocity_z;
+                }
+                if (tra_z >= back_boundary - collisionBuffer) {
+                    tra_z = back_boundary - collisionBuffer;  // Adjust position to correct upon boundary collision
+                    ball_velocity_z = -ball_velocity_z;
+                }
+
+                glm::vec3 velocity = glm::vec3(ball_velocity_x, ball_velocity_y, ball_velocity_z);
+
+                // Collision detection with the paddle
+                if (spherePosition.x >= paddlePos.x - paddleWidth &&
+                    spherePosition.x <= paddlePos.x + paddleWidth &&
+                    spherePosition.y >= paddlePos.y - paddleHeight &&
+                    spherePosition.y <= paddlePos.y + paddleHeight &&
+                    spherePosition.z >= paddlePos.z - paddleDepth &&
+                    spherePosition.z <= paddlePos.z + paddleDepth) {
+
+                    // Calculate collision normal based on the ball's position relative to the paddle's center
+                    glm::vec3 relativePosition = spherePosition - paddlePos;
+                    glm::vec3 collisionNormal = glm::vec3(0, 1, 0); // Default normal for top surface collision (horizontal)
+
+                    // If the ball is rolling along the paddle, force a bounce
+                    if (std::abs(relativePosition.y) < sphereRadius) {
+                        collisionNormal = glm::vec3(0, 1, 0); // Force the ball to bounce upwards
+                    }
+                    else {
+                        collisionNormal = glm::normalize(relativePosition); // Reflect based on the relative position
+                    }
+
+                    glm::vec3 reflectedVelocity = glm::reflect(velocity, collisionNormal);
+
+                    // Ensure the ball bounces up
+                    reflectedVelocity.y = std::abs(reflectedVelocity.y); // Force the y-component to be positive
+
+                    ball_velocity_x = reflectedVelocity.x;
+                    ball_velocity_y = reflectedVelocity.y;
+                    ball_velocity_z = reflectedVelocity.z;
+
+                    std::cout << "Ball collided with the paddle." << std::endl;
+                }
 
                 for (auto& cube : cubes) {
-                   
-                    if (!cube.isDestroyed && cube.collidesWith(glm::vec3(tra_x, position_y, tra_z), sphereRadius)) {
+
+                    if (!cube.isDestroyed && cube.collidesWith(spherePosition, sphereRadius)) {
                         cube.isDestroyed = true;
                         audio.playCollisionSound();
+
                         // Calculate the collision normal
-                        glm::vec3 collisionNormal = glm::normalize(glm::vec3(tra_x, position_y, tra_z) - cube.position);
+                        glm::vec3 collisionNormal = glm::normalize(spherePosition - cube.position);
 
                         // Inside the game loop
                         applyPowerUp(cubes);
 
-                        // Reflect the velocity of the sphere based on the collision normal
-                        glm::vec3 reflectedVelocity = glm::reflect(glm::vec3(ball_velocity_x, ball_velocity_y, ball_velocity_z), collisionNormal);
-                        ball_velocity_x = reflectedVelocity.x;
-                        ball_velocity_y = reflectedVelocity.y;
-                        ball_velocity_z = reflectedVelocity.z;
+                        //std::cout << "Checking collision: Ball at (" << tra_x << ", " << position_y << ", " << tra_z << ") ";
+                        //std::cout << "Block at (" << cube.position.x << ", " << cube.position.y << ", " << cube.position.z << ") ";
+                        ////std::cout << "Distance: " << distance << ", Collision: " << (distance <= radius ? "Yes" : "No") << std::endl;
+
+                        //// Reflect the velocity of the sphere based on the collision normal
+                        //glm::vec3 reflectedVelocity = glm::reflect(velocity, collisionNormal);
+                        //ball_velocity_x = reflectedVelocity.x;
+                        //ball_velocity_y = reflectedVelocity.y;
+                        //ball_velocity_z = reflectedVelocity.z;
                     }
                 }
             }
