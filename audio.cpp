@@ -4,8 +4,8 @@
 Audio::Audio() {
     engine = irrklang::createIrrKlangDevice();
     backgroundMusic = nullptr;
-    backgroundMusicVolume = 0.025f;
-    soundEffectsVolume = 1.0f;
+    backgroundMusicVolume = 0.75f;
+    soundEffectsVolume = 0.50f;
 }
 
 // Destructor that will trigger when the local instance goes out of scope
@@ -17,7 +17,7 @@ Audio::~Audio() {
 
 void Audio::playBackgroundMusic() {
     if (engine) {
-        backgroundMusic = engine->play2D("media/J.ogg", true, false, true);
+        backgroundMusic = engine->play2D("media/bgm.wav", true, false, true);
         backgroundMusic->setVolume(backgroundMusicVolume);
     }
 }
@@ -25,6 +25,12 @@ void Audio::playBackgroundMusic() {
 void Audio::playCollisionSound() {
     if (engine) {
         engine->play2D("media/collision.wav", false, false, true)->setVolume(soundEffectsVolume);
+    }
+}
+
+void Audio::playGameOverSound() {
+    if (engine) {
+        engine->play2D("media/game-over.wav", false, false, true)->setVolume(soundEffectsVolume);
     }
 }
 

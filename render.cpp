@@ -1,29 +1,5 @@
 #include "render.h"
 
-// Fall back implementation (will remove soon)
-// 
-// Close window upon ESC keypress
-//void key(GLFWwindow* window, int k, int s, int action, int mods)
-//{
-//    if (action == GLFW_PRESS || action == GLFW_REPEAT) return;
-//
-//    PaddleState* paddleState = reinterpret_cast<PaddleState*>(glfwGetWindowUserPointer(window)); // Get paddle state from GLFW window glfwGetWindowUserPointer(window);
-//
-//    switch (k) {
-//    case GLFW_KEY_ESCAPE:
-//        glfwSetWindowShouldClose(window, GLFW_TRUE);
-//        break;
-//    case GLFW_KEY_A:
-//        paddleState->x_pos -= 0.1f; // Move left
-//        break;
-//    case GLFW_KEY_D:
-//        paddleState->x_pos += 0.1f; // Move right
-//        break;
-//    default:
-//        return;
-//    }
-//}
-
 void key(GLFWwindow* window, int k, int s, int action, int mods)
 {
     PaddleState* paddleState = reinterpret_cast<PaddleState*>(glfwGetWindowUserPointer(window)); // Get paddle state from GLFW window glfwGetWindowUserPointer(window);
@@ -31,9 +7,6 @@ void key(GLFWwindow* window, int k, int s, int action, int mods)
 
     if (action == GLFW_PRESS || action == GLFW_REPEAT) {
         switch (k) {
-        case GLFW_KEY_ESCAPE:
-            glfwSetWindowShouldClose(window, GLFW_TRUE);
-            break;
         case GLFW_KEY_A:
             paddleState->direction -= 1.0f; // Move left
             break;

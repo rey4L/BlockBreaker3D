@@ -18,7 +18,7 @@ bool Cube::collidesWith(glm::vec3 point, float radius) {
     }
 
     // Calculate the minimum and maximum coordinates of the cube
-    float halfScale = scale * 0.5f;
+    float halfScale = scale * 0.25f;
     glm::vec3 minPos = position - halfScale;
     glm::vec3 maxPos = position + halfScale;
 

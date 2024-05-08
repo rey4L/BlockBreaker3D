@@ -10,6 +10,7 @@ public:
 
 	void playBackgroundMusic();
 	void playCollisionSound();
+	void playGameOverSound();
 	void setBackgroundMusicVolume(float volume);
 	void setSoundEffectsVolume(float volume);
 

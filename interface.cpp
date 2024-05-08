@@ -2,9 +2,11 @@
 
 bool showMenu = true;
 bool isPaused = false;
+bool isGameOver = false;
+bool resetGame = false;
 
-float backgroundMusicVolume = 0.025f;
-float soundEffectsVolume = 1.0f;
+float backgroundMusicVolume = 0.75f;
+float soundEffectsVolume = 0.50f;
 
 void renderMenu() {
     ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
@@ -79,7 +81,7 @@ void renderMenu() {
 
     ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
     if (ImGui::Button("QUIT", buttonSize)) {
-        // Add code to handle options menu
+		exit(0);
     }
     ImGui::SetCursorPosX((windowWidth - ImGui::CalcTextSize("Quit").x) * 0.5f);
 
@@ -114,7 +116,7 @@ void renderPauseMenu() {
 
     ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
     if (ImGui::Button("RESTART", buttonSize)) {
-        // Add code to restart the game
+        resetGame = true;
     }
     ImGui::SetCursorPosX(windowWidth - ImGui::CalcTextSize("Restart").x * 0.5f);
 
@@ -126,6 +128,43 @@ void renderPauseMenu() {
         showMenu = true;
     }
     ImGui::SetCursorPosX((windowWidth - ImGui::CalcTextSize("Main Menu").x) * 0.5f);
+
+    ImGui::PopStyleVar();
+    ImGui::End();
+}
+
+void renderGameOverMenu() {
+    if (!isGameOver) return;
+
+    ImGui::Begin(":(", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+    ImGui::SetWindowSize(ImVec2(300, 200));
+    ImGui::SetWindowPos(ImVec2(250, 250));
+
+    float windowWidth = ImGui::GetWindowSize().x;
+    float textWidth = ImGui::CalcTextSize("GAME OVER").x;
+    ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+    ImGui::Text("\n\nGAME OVER");
+
+    ImVec2 buttonSize(120, 30);
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+
+    ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.5f);
+
+    ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
+    if (ImGui::Button("TRY AGAIN", buttonSize)) {
+        resetGame = true;
+    }
+
+    ImGui::SetCursorPosX((windowWidth - ImGui::CalcTextSize("Try Again").x) * 0.5f);
+
+    ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.7f);
+
+    ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
+    if (ImGui::Button("EXIT", buttonSize)) {
+        exit(0);
+    }
+
+    ImGui::SetCursorPosX((windowWidth - ImGui::CalcTextSize("Exit").x) * 0.5f);
 
     ImGui::PopStyleVar();
     ImGui::End();
