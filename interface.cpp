@@ -2,8 +2,8 @@
 
 bool showMenu = true;
 bool isPaused = false;
-bool isGameOver = false;
-bool resetGame = false;
+bool isGameOver = false; 
+bool resetGame = false; 
 
 float backgroundMusicVolume = 0.75f;
 float soundEffectsVolume = 0.50f;

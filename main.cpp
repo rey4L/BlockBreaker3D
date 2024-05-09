@@ -10,33 +10,30 @@
 #include "render.h"
 #include <iostream>
 #include "audio.h"
-#include <random> // Add this header for random number generation
-
 
 // Translation matrix values for the ball
 float tra_x = 0.0f;
-float tra_y = 0.35f;
-float tra_z = -10.0f; // z-value of the scene and paddle + z-value of the blocks;
+float tra_y = 0.0f;
+float tra_z = -10.0f; // z-value of the ball;
 
 // Rotation matrix values for the ball
 const float rot_x = 0.0f;
 const float rot_y = 0.0f;
 const float rot_z = 1.0f;
 
-std::vector <unsigned int> paddle_indices;
-std::vector <float> paddle_vertices;
-
 // Ball velocity
 float ball_velocity_x = 5.0f;
 float ball_velocity_y = 5.0f;
 float ball_velocity_z = 0.0f;
 
+float position_y = -2.0f; // Initial Y position
+
 // Define an index to keep track of the current color
-int currentColorIndex = 0; //changed
+int currentColorIndex = 0; 
 std::vector<Cube> cubes;
 
-// Define an array of colors for the cubes changed 
-glm::vec3 cubeColors[] = {
+// Define an array of colors for the cubes 
+glm::vec3 cubeColors[12] = {
     glm::vec3(1.0f, 0.0f, 0.0f),   // Red
     glm::vec3(0.0f, 1.0f, 0.0f),   // Green
     glm::vec3(0.0f, 0.0f, 1.0f),   // Blue
@@ -50,47 +47,6 @@ glm::vec3 cubeColors[] = {
     glm::vec3(0.5f, 1.0f, 0.0f),   // Yellowish-green
     glm::vec3(0.0f, 0.5f, 1.0f),   // Blueish-cyan
 };
-
-// Function to apply a power-up to a random block
-void applyPowerUp(std::vector<Cube>& cubes) {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, cubes.size() - 1);
-
-    int randomIndex = dis(gen);
-
-    if (!cubes[randomIndex].isDestroyed) {
-        // Apply power-up logic here
-        cubes[randomIndex].color = glm::vec3(1.0f, 1.0f, 1.0f); // White
-    }
-}
-
-void resetGameState() {
-    // Reset the pause menu flag
-    isPaused = false;
-
-    // Reset the ball's position and velocity
-    tra_x = 0.0f;
-    tra_y = 0.35f;
-    tra_z = -10.0f;
-
-    ball_velocity_x = 5.0f;
-    ball_velocity_y = 5.0f;
-    ball_velocity_z = 0.0f;
-
-    // Reset cube states (not destroyed)
-    int currentColorIndex = 0;
-    for (int row = 0; row < 4; ++row) {
-        for (int col = 0; col < 8; ++col) {
-            cubes[row * 8 + col] = Cube(glm::vec3(col * 0.7f - 3.4f, row * 0.3f + 1.8f, -10.0f), 0.55f, cubeColors[currentColorIndex]);
-            currentColorIndex = (currentColorIndex + 1) % (sizeof(cubeColors) / sizeof(cubeColors[0]));
-        }
-    }
-
-    // Ensure the game is not paused or marked as over
-    isPaused = false;
-    isGameOver = false;
-}
 
 int main() {
 
@@ -144,15 +100,36 @@ int main() {
     glLineWidth(lineWidth);
 
     // Paddle primitive initialization
+
+    std::vector<GLfloat> pill_vertices;
+    std::vector<GLuint> pill_indices;
+
+    int numCylinderIndices = segments * 12;
+    int numSphereIndices = segments * segments * 12;
+    int totalIndices = numCylinderIndices + numSphereIndices;
+
+    float radius = 0.70f / 2;
+    float length = 2.250f;
+
+    generatePillVertices(pill_vertices, radius, length);
+    generatePillIndices(pill_indices);
+
     VAO VAO2;
     VAO2.Bind();
 
-    VBO VBO2(Vertices::paddle_vertices, sizeof(Vertices::paddle_vertices));
-    EBO EBO2(Vertices::square_cube_indices, sizeof(Vertices::square_cube_indices));
+    VBO VBO2(pill_vertices.data(), pill_vertices.size() * sizeof(float));
+    EBO EBO2(pill_indices.data(), pill_indices.size() * sizeof(float));
 
     VAO2.LinkAttrib(VBO2, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
     VAO2.LinkAttrib(VBO2, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     VAO2.LinkAttrib(VBO2, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+
+    /*VBO VBO2(Vertices::paddle_vertices, sizeof(Vertices::paddle_vertices));
+    EBO EBO2(Vertices::square_cube_indices, sizeof(Vertices::square_cube_indices));
+
+    VAO2.LinkAttrib(VBO2, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+    VAO2.LinkAttrib(VBO2, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    VAO2.LinkAttrib(VBO2, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));*/
 
     VAO2.Unbind();
     VBO2.Unbind();
@@ -193,7 +170,7 @@ int main() {
     glEnable(GL_DEPTH_TEST);
 
     // Bouncing constants
-    float position_y = 1.0f; // Initial Y position
+    
     //float groundLevel = -2.7f; // Y position of the ground;
 
     double lastTime = glfwGetTime();
@@ -344,10 +321,11 @@ int main() {
 
         cuboid.Bind();
         VAO2.Bind();
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, totalIndices, GL_UNSIGNED_INT, 0);
 
         // -- Sphere related code --
-        double crntTime = glfwGetTime();
+        //double crntTime = glfwGetTime();
+
         glm::vec3 spherePosition = glm::vec3(tra_x, position_y, tra_z);
 
         glm::mat4 sphereModel = glm::mat4(1.0f);
@@ -385,7 +363,8 @@ int main() {
             renderPauseMenu();
 
             if (resetGame) {
-                resetGameState();
+                audio.stopBackgroundMusic();
+                resetGameState(audio); // Add immersion by also resetting the game audio upon restart
                 resetGame = false;
             }
         }
@@ -394,7 +373,7 @@ int main() {
             renderGameOverMenu();
 
             if (resetGame) {
-                resetGameState();
+                resetGameState(audio);
                 resetGame = false;
             }
         }
@@ -411,9 +390,9 @@ int main() {
             tra_z += ball_velocity_z * deltaTime;
 
             const float collisionBuffer = 0.1f;
-            float paddleWidth = 1.0f;
+            float paddleWidth = 0.60f; // Needs to be adjusted
             float paddleHeight = 0.25f;
-            float paddleDepth = 0.5f;
+            float paddleDepth = 0.25;
 
             if (tra_x <= left_boundary + collisionBuffer) {
                 tra_x = left_boundary + collisionBuffer;  // Correct position if boundary is crossed
@@ -427,6 +406,7 @@ int main() {
 
             if (position_y <= bottom_boundary + collisionBuffer) {
                 std::cout << "Bottom collision" << std::endl;
+                audio.stopBackgroundMusic();
                 audio.playGameOverSound();
                 isGameOver = true;
             }

@@ -13,6 +13,7 @@ public:
 	void playGameOverSound();
 	void setBackgroundMusicVolume(float volume);
 	void setSoundEffectsVolume(float volume);
+	void stopBackgroundMusic();
 
 private:
 	irrklang::ISoundEngine* engine;

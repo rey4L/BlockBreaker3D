@@ -53,6 +53,147 @@ void generateSphere(float radius, unsigned int longitudeCount, unsigned int lati
     }
 }
 
+//The commented out code in the following functions are responsible 
+// for changing the orientation of the cylinder
+
+void generateCylinderVertices(std::vector<GLfloat>& vertices, float radius, float length) {
+    const float half_length = length / 2;
+
+    for (int i = 0; i <= segments; ++i) {
+        float angle = i * (2 * M_PI / segments);
+        float x = cos(angle) * radius;
+        float y = sin(angle) * radius;
+
+        // Top face
+        /*vertices.push_back(x);
+        vertices.push_back(y);
+        vertices.push_back(half_length);*/
+        vertices.push_back(half_length);
+        vertices.push_back(x);
+        vertices.push_back(y);
+        vertices.push_back(0.83f);
+        vertices.push_back(0.70f);
+        vertices.push_back(0.44f);
+        vertices.push_back(static_cast<float>(i) / segments);
+        vertices.push_back(0.0f);
+
+        // Bottom face
+        /*vertices.push_back(x);
+        vertices.push_back(y);
+        vertices.push_back(-half_length);*/
+        vertices.push_back(-half_length);
+        vertices.push_back(x);
+        vertices.push_back(y);
+        vertices.push_back(0.83f);
+        vertices.push_back(0.70f);
+        vertices.push_back(0.44f);
+        vertices.push_back(static_cast<float>(i) / segments);
+        vertices.push_back(1.0f);
+    }
+}
+
+void generateSphereVertices(std::vector<GLfloat>& vertices, float radius, float length) {
+    const float half_length = length / 2;
+
+    for (int i = 0; i <= segments / 2; ++i) {
+        float v = i * (M_PI / segments);
+        float y = cos(v) * radius;
+        float slice_radius = sin(v) * radius;
+
+        for (int j = 0; j <= segments; ++j) {
+            float u = j * (2 * M_PI / segments);
+            float x = cos(u) * slice_radius;
+            float z = sin(u) * slice_radius;
+
+            // Top half-sphere
+            /*vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z + half_length);*/
+            vertices.push_back(half_length);
+            vertices.push_back(x);
+            vertices.push_back(z);
+            vertices.push_back(0.83f);
+            vertices.push_back(0.70f);
+            vertices.push_back(0.44f);
+            vertices.push_back(static_cast<float>(j) / segments);
+            vertices.push_back(static_cast<float>(i) / (segments / 2));
+
+            // Bottom half-sphere
+            /*vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z - half_length);*/
+            vertices.push_back(-half_length);
+            vertices.push_back(x);
+            vertices.push_back(z);
+            vertices.push_back(0.83f);
+            vertices.push_back(0.70f);
+            vertices.push_back(0.44f);
+            vertices.push_back(static_cast<float>(j) / segments);
+            vertices.push_back(1.0f - static_cast<float>(i) / (segments / 2));
+        }
+    }
+}
+
+void generateCylinderIndices(std::vector<GLuint>& indices) {
+    for (int i = 0; i < segments; ++i) {
+        indices.push_back(i * 2);
+        indices.push_back(i * 2 + 1);
+        indices.push_back((i + 1) * 2 + 1);
+
+        indices.push_back(i * 2);
+        indices.push_back((i + 1) * 2 + 1);
+        indices.push_back((i + 1) * 2);
+    }
+
+    // Connect the last vertex to the first vertex to close the seam
+    indices.push_back(segments * 2);
+    indices.push_back(segments * 2 + 1);
+    indices.push_back(1);
+
+    indices.push_back(segments * 2);
+    indices.push_back(1);
+    indices.push_back(0);
+}
+
+void generateSphereIndices(std::vector<GLuint>& indices) {
+    int base_index = segments * 2 + 2;
+    for (int i = 0; i < segments / 2; ++i) {
+        for (int j = 0; j < segments; ++j) {
+            int next_i = (i + 1) % (segments / 2 + 1);
+            int next_j = (j + 1) % (segments + 1);
+
+            // Top half-sphere
+            indices.push_back(base_index + i * (segments + 1) + j);
+            indices.push_back(base_index + next_i * (segments + 1) + j);
+            indices.push_back(base_index + next_i * (segments + 1) + next_j);
+
+            indices.push_back(base_index + i * (segments + 1) + j);
+            indices.push_back(base_index + next_i * (segments + 1) + next_j);
+            indices.push_back(base_index + i * (segments + 1) + next_j);
+
+            // Bottom half-sphere
+            int bottom_offset = (segments / 2 + 1) * (segments + 1);
+            indices.push_back(base_index + bottom_offset + i * (segments + 1) + j);
+            indices.push_back(base_index + bottom_offset + i * (segments + 1) + next_j);
+            indices.push_back(base_index + bottom_offset + next_i * (segments + 1) + next_j);
+
+            indices.push_back(base_index + bottom_offset + i * (segments + 1) + j);
+            indices.push_back(base_index + bottom_offset + next_i * (segments + 1) + next_j);
+            indices.push_back(base_index + bottom_offset + next_i * (segments + 1) + j);
+        }
+    }
+}
+
+void generatePillVertices(std::vector<GLfloat>& vertices, float radius, float length) {
+    generateCylinderVertices(vertices, radius, length);
+    generateSphereVertices(vertices, radius, length);
+}
+
+void generatePillIndices(std::vector<GLuint>& indices) {
+    generateCylinderIndices(indices);
+    generateSphereIndices(indices);
+}
+
 namespace Vertices {
 
     GLuint square_cube_indices[36] = {

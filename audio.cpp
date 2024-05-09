@@ -1,5 +1,6 @@
 #include "audio.h"
 #include "interface.h"
+#include <iostream>
 
 Audio::Audio() {
     engine = irrklang::createIrrKlangDevice();
@@ -38,9 +39,19 @@ void Audio::setBackgroundMusicVolume(float volume) {
     backgroundMusicVolume = volume;
     if (backgroundMusic) {
         backgroundMusic->setVolume(backgroundMusicVolume);
+    } else {
+        std::cout << "Background music is not playing; volume change stored but not applied." << std::endl;
     }
 }
 
 void Audio::setSoundEffectsVolume(float volume) {
     soundEffectsVolume = volume;
+}
+
+void Audio::stopBackgroundMusic() {
+    if (engine && backgroundMusic) {
+        backgroundMusic->stop();
+        backgroundMusic->drop();
+		backgroundMusic = nullptr;
+    }
 }
