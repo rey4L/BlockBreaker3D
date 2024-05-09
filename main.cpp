@@ -138,12 +138,16 @@ int main() {
     block.texUnit(shaderProgram, "tex0", 0);
 
     glEnable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+
+    GLfloat lineWidth = 2.25f;
+    glLineWidth(lineWidth);
 
     // Paddle primitive initialization
     VAO VAO2;
     VAO2.Bind();
 
-    VBO VBO2(Vertices::cuboid_vertices, sizeof(Vertices::cuboid_vertices));
+    VBO VBO2(Vertices::paddle_vertices, sizeof(Vertices::paddle_vertices));
     EBO EBO2(Vertices::square_cube_indices, sizeof(Vertices::square_cube_indices));
 
     VAO2.LinkAttrib(VBO2, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);

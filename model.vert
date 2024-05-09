@@ -8,8 +8,6 @@ out vec2 TexCoords;
 out vec3 FragPos; // Position of the fragment in world space
 out vec3 Normal;  // Normal vector of the fragment
 
-
-
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;

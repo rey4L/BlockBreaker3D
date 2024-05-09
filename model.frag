@@ -11,7 +11,6 @@ uniform vec3 lightPos;    // Position of the light source
 uniform vec3 lightColor;  // Color of the light source
 uniform vec3 viewPos;     // Position of the camera/viewer
 
-
 // Lighting parameters
 uniform vec3 ambientColor;
 uniform float ambientStrength;
