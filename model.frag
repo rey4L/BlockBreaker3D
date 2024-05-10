@@ -20,7 +20,7 @@ uniform float shininess;
 void main()
 {    
     // Ambient lighting
-    float ambientStrength = 0.1;
+    //float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * lightColor;
 
     // Diffuse lighting
@@ -40,5 +40,5 @@ void main()
 
     FragColor = vec4(result, 1.0);
 
-    FragColor = texture(diffuseMap, TexCoords);
+    //FragColor = texture(diffuseMap, TexCoords);
 }

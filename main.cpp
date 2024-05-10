@@ -108,8 +108,9 @@ int main() {
     int numSphereIndices = segments * segments * 12;
     int totalIndices = numCylinderIndices + numSphereIndices;
 
+    // Set paddle radius and legth
     float radius = 0.70f / 2;
-    float length = 2.250f;
+    float length = 2.25f;
 
     generatePillVertices(pill_vertices, radius, length);
     generatePillIndices(pill_indices);
@@ -212,12 +213,12 @@ int main() {
         glm::vec3 paddleColor = glm::vec3(0.0, 1.0, 0.0); // Green changed 
         glm::vec3 ballColor = glm::vec3(0.0, 0.0, 1.0); // Blue changed
 
-        glm::vec3 lightPos(1.0f, 2.0f, 2.0f);  // changed 
+        glm::vec3 lightPos(0.0f, 0.0f, 0.0f);  // changed 
         glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // changed 
         glm::vec3 ambientColor(0.2f, 0.2f, 0.2f); // changed 
-        float ambientStrength = 0.3f; // changed 
-        float specularStrength = 0.5f; // changed 
-        float shininess = 64.0f; // changed 
+        float ambientStrength = 0.0f; // changed 
+        float specularStrength = 0.0f; // changed 
+        float shininess = 0.0f; // changed 
 
 
         // Tell OpenGL which Shader Program we want to use
@@ -353,11 +354,13 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        if (showMenu) {
+        if (showMenu || showHelp) {
             renderMenu();
+            renderHelpWindow();
             audio.setBackgroundMusicVolume(backgroundMusicVolume);
             audio.setSoundEffectsVolume(soundEffectsVolume);
         }
+
         else if (isPaused) {
 
             renderPauseMenu();

@@ -10,11 +10,13 @@ extern bool showMenu;
 extern bool isPaused;
 extern bool isGameOver;
 extern bool resetGame;
+extern bool showHelp;
 
 extern float backgroundMusicVolume;
 extern float soundEffectsVolume;
 
 void renderMenu();
+void renderHelpWindow();
 void renderPauseMenu();
 void renderGameOverMenu();
 

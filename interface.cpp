@@ -3,7 +3,8 @@
 bool showMenu = true;
 bool isPaused = false;
 bool isGameOver = false; 
-bool resetGame = false; 
+bool resetGame = false;
+bool showHelp = false;
 
 float backgroundMusicVolume = 0.75f;
 float soundEffectsVolume = 0.50f;
@@ -85,8 +86,52 @@ void renderMenu() {
     }
     ImGui::SetCursorPosX((windowWidth - ImGui::CalcTextSize("Quit").x) * 0.5f);
 
-    ImGui::PopStyleVar();
+    // Help button
+    ImVec2 helpButtonSize(25, 25);
+    ImGui::SetCursorPos(ImVec2(windowWidth - helpButtonSize.x - 10, ImGui::GetWindowHeight() - helpButtonSize.y - 10));
+    
+    if (ImGui::Button("?", helpButtonSize)) {
+        showHelp = !showHelp;
+    }
 
+    if (ImGui::IsItemHovered()) {
+        ImGui::SetTooltip("Help");
+    }
+
+    ImGui::PopStyleVar();
+    ImGui::End();
+}
+
+void renderHelpWindow() {
+	if (!showHelp) return;
+
+	ImGui::Begin("Help",&showHelp, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+    ImGui::SetWindowSize(ImVec2(600, 300));
+    ImGui::SetWindowPos(ImVec2(80, 250));
+
+    float defaultFontScale = ImGui::GetIO().FontGlobalScale;
+    ImGui::SetWindowFontScale(1.2f);
+
+    ImGui::Text("Objective:");
+    ImGui::BulletText("Break all the blocks without letting the ball hit the ground.");
+
+    ImGui::Spacing();
+    ImGui::Text("\nControls:");
+    ImGui::BulletText("Move the paddle left: A");
+    ImGui::BulletText("Move the paddle right: D");
+    ImGui::BulletText("Pause the game: Escape");
+
+    ImGui::Spacing();
+    ImGui::Text("\nGameplay:");
+    ImGui::BulletText("Use the paddle to bounce the ball and break the blocks.");
+    ImGui::BulletText("White blocks are multi-hit and require multiple hits to break.");
+    ImGui::BulletText("Each block successfully broken awards 300 points.");
+    ImGui::BulletText("Don't let the ball hit the ground, or you'll lose a life.");
+
+    ImGui::Spacing();
+    ImGui::Text("\nGood luck and have fun!");
+
+	ImGui::SetWindowFontScale(defaultFontScale);
     ImGui::End();
 }
 
