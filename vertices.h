@@ -6,7 +6,7 @@
 #include <vector>
 #include <cmath>
 
-const int segments = 32;
+const int segments = 64;
 
 void generateSphere(float radius, unsigned int longitudeCount, unsigned int latitudeCount, std::vector<float>& vertices, std::vector<unsigned int>& indices);
 void generateCylinderVertices(std::vector<GLfloat>& vertices, float radius, float length);

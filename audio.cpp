@@ -29,6 +29,12 @@ void Audio::playCollisionSound() {
     }
 }
 
+void Audio::playResponseSound() {
+    if (engine) {
+        engine->play2D("media/beep.wav", false, false, true)->setVolume(soundEffectsVolume);
+    }
+}
+
 void Audio::playGameOverSound() {
     if (engine) {
         engine->play2D("media/game-over.wav", false, false, true)->setVolume(soundEffectsVolume);

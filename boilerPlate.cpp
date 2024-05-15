@@ -58,11 +58,13 @@ void resetGameState(Audio& audio) {
     position_y = 0.0f;
 
     // Reset cube states (not destroyed)
-    //int currentColorIndex = 0;
     for (int row = 0; row < 4; ++row) {
-        for (int col = 0; col < 8; ++col) {
-            cubes[row * 8 + col] = Cube(glm::vec3(col * 0.7f - 3.4f, row * 0.3f + 1.8f, -10.0f), 0.55f, cubeColors[currentColorIndex]);
+        for (int col = 0; col < 7; ++col) {
+            float normalizedX = gameWorldMinX + col * blockSpacingX + blockSpacingX / 2.0f;
+            float normalizedY = gameWorldMinY + row * blockSpacingY + blockSpacingY / 2.0f;
+            Cube cube(glm::vec3(normalizedX, normalizedY, gameWorldZ), blockSize, cubeColors[currentColorIndex]);
             currentColorIndex = (currentColorIndex + 1) % (sizeof(cubeColors) / sizeof(cubeColors[0]));
+            cubes.push_back(cube);
         }
     }
 

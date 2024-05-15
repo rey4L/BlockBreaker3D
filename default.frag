@@ -4,9 +4,9 @@ out vec4 FragColor;
 
 in vec3 FragPos;
 in vec3 Normal;
-in vec2 texCoord;
+//in vec2 texCoord;
 
-uniform sampler2D tex0;
+//uniform sampler2D tex0;
 uniform vec3 objectColor;
 
 // Light properties
@@ -22,11 +22,11 @@ void main()
     
     // Ambient component
     vec3 ambientColor = vec3(1.0, 1.0, 1.0);
-    vec3 ambient = ambientColor * texture(tex0, texCoord).rgb;
+    vec3 ambient = ambientColor;
     
     // Diffuse component
     float diff = max(dot(norm, lightDir), 0.5);
-    vec3 diffuse = diff * lightColor * texture(tex0, texCoord).rgb;
+    vec3 diffuse = diff * lightColor;
     
     // Specular component
     float specularStrength = 1.25;

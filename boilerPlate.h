@@ -16,9 +16,9 @@
 #include "audio.h"
 
 // Blocks postion within the window
-const float x = 1.0f;
-const float y = 0.25f;
-const float z = -2.5f;
+const float x = -0.2f;
+const float y = -0.15f;
+const float z = -0.5f;
 
 // Window color values
 const float r = 0.01;
@@ -36,6 +36,18 @@ extern float tra_z; // z-value of the scene and paddle + z-value of the blocks;
 extern const float rot_x;
 extern const float rot_y;
 extern const float rot_z;
+
+// Define the game world boundaries
+extern const float gameWorldMinX;
+extern const float gameWorldMaxX;
+extern const float gameWorldMinY;
+extern const float gameWorldMaxY;
+extern const float gameWorldZ;
+
+// Calculate the block spacing and size
+extern const float blockSpacingX;
+extern const float blockSpacingY;
+extern const float blockSize;
 
 // Ball velocity
 extern float ball_velocity_x;

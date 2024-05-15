@@ -4,7 +4,7 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
-#include "Texture.h"
+//#include "Texture.h" Effectively removed texture logic but still keeping it in case i need it later - Rey
 #include "vertices.h"
 #include "block.h"
 #include "render.h"
@@ -19,7 +19,7 @@ float tra_z = -10.0f; // z-value of the ball;
 // Rotation matrix values for the ball
 const float rot_x = 0.0f;
 const float rot_y = 0.0f;
-const float rot_z = 1.0f;
+const float rot_z = 0.0f;
 
 // Ball velocity
 float ball_velocity_x = 5.0f;
@@ -27,6 +27,18 @@ float ball_velocity_y = 5.0f;
 float ball_velocity_z = 0.0f;
 
 float position_y = -2.0f; // Initial Y position
+
+// Define the game world boundaries
+const float gameWorldMinX = -2.1f;
+const float gameWorldMaxX = 3.2f;
+const float gameWorldMinY = 1.5f;
+const float gameWorldMaxY = 2.7f;
+const float gameWorldZ = -10.0f;
+
+// Calculate the block spacing and size
+const float blockSpacingX = (gameWorldMaxX - gameWorldMinX) / 8.0f;
+const float blockSpacingY = (gameWorldMaxY - gameWorldMinY) / 4.0f;
+const float blockSize = 0.55f;
 
 // Define an index to keep track of the current color
 int currentColorIndex = 0; 
@@ -90,13 +102,13 @@ int main() {
 
     // Texture initialization
     GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
-    Texture block("block-tex.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    block.texUnit(shaderProgram, "tex0", 0);
+    /*Texture block("block-tex.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    block.texUnit(shaderProgram, "tex0", 0);*/
 
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
 
-    GLfloat lineWidth = 2.25f;
+    GLfloat lineWidth = 2.0f;
     glLineWidth(lineWidth);
 
     // Paddle primitive initialization
@@ -125,20 +137,13 @@ int main() {
     VAO2.LinkAttrib(VBO2, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     VAO2.LinkAttrib(VBO2, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
-    /*VBO VBO2(Vertices::paddle_vertices, sizeof(Vertices::paddle_vertices));
-    EBO EBO2(Vertices::square_cube_indices, sizeof(Vertices::square_cube_indices));
-
-    VAO2.LinkAttrib(VBO2, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
-    VAO2.LinkAttrib(VBO2, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    VAO2.LinkAttrib(VBO2, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));*/
-
     VAO2.Unbind();
     VBO2.Unbind();
     EBO2.Unbind();
 
     // Texture initialization
-    Texture cuboid("blue-neon.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    cuboid.texUnit(shaderProgram, "tex0", 0);
+    /*Texture cuboid("blue-neon.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    cuboid.texUnit(shaderProgram, "tex0", 0);*/
 
     //-- Adding the sphere --//
 
@@ -165,28 +170,18 @@ int main() {
     EBO3.Unbind();
 
     // Texture initialization
-    Texture sphere("circle.jpg", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    sphere.texUnit(shaderProgram, "tex0", 0);
+    /*Texture sphere("circle.jpg", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    sphere.texUnit(shaderProgram, "tex0", 0);*/
 
     glEnable(GL_DEPTH_TEST);
 
-    // Bouncing constants
-    
-    //float groundLevel = -2.7f; // Y position of the ground;
-
     double lastTime = glfwGetTime();
 
-    // Scene boundaries
-    float left_boundary = -3.25f;
-    float right_boundary = 2.5f;
-    float top_boundary = 2.5f;
-    float bottom_boundary = -3.5f;
-    float front_boundary = -15.0f;
-    float back_boundary = -5.0f;
-
     for (int row = 0; row < 4; ++row) {
-        for (int col = 0; col < 8; ++col) {
-            Cube cube(glm::vec3(col * 0.7f - 3.4f, row * 0.3f + 1.8f, -10.0f), 0.55f, cubeColors[currentColorIndex]);
+        for (int col = 0; col < 7; ++col) {
+            float normalizedX = gameWorldMinX + col * blockSpacingX + blockSpacingX / 2.0f;
+            float normalizedY = gameWorldMinY + row * blockSpacingY + blockSpacingY / 2.0f;
+            Cube cube(glm::vec3(normalizedX, normalizedY, gameWorldZ), blockSize, cubeColors[currentColorIndex]);
             currentColorIndex = (currentColorIndex + 1) % (sizeof(cubeColors) / sizeof(cubeColors[0]));
             cubes.push_back(cube);
         }
@@ -200,6 +195,9 @@ int main() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
+    ImFont* myFont = io.Fonts->AddFontFromFileTTF("font/Minecraft.ttf", 15.0f); // Custom font
+    io.FontDefault = myFont;
+
     // Main while loop
     while (!glfwWindowShouldClose(window)) {
         // Specify the color of the background
@@ -210,7 +208,7 @@ int main() {
 
         // Define colors for each object changed
         glm::vec3 cubeColor = glm::vec3(1.0, 0.0, 0.0); // Red changed 
-        glm::vec3 paddleColor = glm::vec3(0.0, 1.0, 0.0); // Green changed 
+        glm::vec3 paddleColor = glm::vec3(1.0, 1.0, 1.0); // Green changed 
         glm::vec3 ballColor = glm::vec3(0.0, 0.0, 1.0); // Blue changed
 
         glm::vec3 lightPos(0.0f, 0.0f, 0.0f);  // changed 
@@ -228,7 +226,7 @@ int main() {
         int objectColorLoc = glGetUniformLocation(shaderProgram.ID, "objectColor"); //changed
 
         // -- Block related code --
-        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 model;
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 proj = glm::mat4(1.0f);
 
@@ -271,7 +269,7 @@ int main() {
         // Scale all axes by 65%
         glUniform1f(uniID, 0.5f);
 
-        block.Bind();
+        //block.Bind();
 
         // Bind the VAO so OpenGL knows to use it
         VAO1.Bind();
@@ -308,7 +306,7 @@ int main() {
 
         // Translate the paddle
         PaddleView = glm::translate(PaddleView, paddlePos);
-        PaddleProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
+        PaddleProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 1.1f, 100.0f);
 
         // Outputs the matrices into the Vertex Shader
         int PaddleModelLoc = glGetUniformLocation(shaderProgram.ID, "model");
@@ -320,7 +318,7 @@ int main() {
         int PaddleProjLoc = glGetUniformLocation(shaderProgram.ID, "proj");
         glUniformMatrix4fv(PaddleProjLoc, 1, GL_FALSE, glm::value_ptr(PaddleProj));
 
-        cuboid.Bind();
+        //cuboid.Bind();
         VAO2.Bind();
         glDrawElements(GL_TRIANGLES, totalIndices, GL_UNSIGNED_INT, 0);
 
@@ -392,19 +390,29 @@ int main() {
             position_y += ball_velocity_y * deltaTime;
             tra_z += ball_velocity_z * deltaTime;
 
-            const float collisionBuffer = 0.1f;
+            const float collisionBuffer = 0.0f;
             float paddleWidth = 0.60f; // Needs to be adjusted
             float paddleHeight = 0.25f;
             float paddleDepth = 0.25;
 
+            // Scene boundaries
+            float left_boundary = -2.5f;
+            float right_boundary = 2.5f;
+            float top_boundary = 2.5f;
+            float bottom_boundary = -3.5f;
+            float front_boundary = -15.0f;
+            float back_boundary = -5.0f;
+
             if (tra_x <= left_boundary + collisionBuffer) {
                 tra_x = left_boundary + collisionBuffer;  // Correct position if boundary is crossed
                 ball_velocity_x = -ball_velocity_x;
+                audio.playResponseSound();
             }
 
             if (tra_x >= right_boundary - collisionBuffer) {
                 tra_x = right_boundary - collisionBuffer;  // Correct position if boundary is crossed
                 ball_velocity_x = -ball_velocity_x;
+                audio.playResponseSound();
             }
 
             if (position_y <= bottom_boundary + collisionBuffer) {
@@ -417,6 +425,7 @@ int main() {
             if (position_y >= top_boundary - collisionBuffer) {
                 position_y = top_boundary - collisionBuffer;  // Adjust position to correct upon boundary collision
                 ball_velocity_y = -ball_velocity_y;
+                audio.playResponseSound();
             }
 
             if (tra_z <= front_boundary + collisionBuffer) {
@@ -442,10 +451,13 @@ int main() {
                 glm::vec3 relativePosition = spherePosition - paddlePos;
                 glm::vec3 collisionNormal = glm::vec3(0, 1, 0); // Default normal for top surface collision (horizontal)
 
+                audio.playResponseSound();
+
                 // If the ball is rolling along the paddle, force a bounce
                 if (std::abs(relativePosition.y) < sphereRadius) {
                     collisionNormal = glm::vec3(0, 1, 0); // Force the ball to bounce upwards
                 }
+
                 else {
                     collisionNormal = glm::normalize(relativePosition); // Reflect based on the relative position
                 }
@@ -483,7 +495,7 @@ int main() {
             }
         }
 
-        sphere.Bind();
+        //sphere.Bind();
 		VAO3.Bind();
         glDrawElements(GL_TRIANGLES, sphereIndices.size(), GL_UNSIGNED_INT, 0);
 
@@ -498,15 +510,15 @@ int main() {
     VAO1.Delete();
     VBO1.Delete();
     EBO1.Delete();
-    block.Delete();
+    //block.Delete();
     VAO2.Delete();
     VBO2.Delete();
     EBO2.Delete();
-    cuboid.Delete();
+    //cuboid.Delete();
     VAO3.Delete();
 	VBO3.Delete();
 	EBO3.Delete();
-	sphere.Delete();
+	//sphere.Delete();
     shaderProgram.Delete();
     modelShader.Delete();
 

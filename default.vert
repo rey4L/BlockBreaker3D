@@ -10,7 +10,7 @@ out vec3 Normal; // Output normal for fragment shader changed
 
 
 out vec3 thisColor; // Output to fragment shader
-out vec2 texCoord;
+//out vec2 texCoord;
 uniform float scale; // Uniform to scale our axes
 
 uniform mat4 model;
@@ -22,6 +22,6 @@ void main()
 	gl_Position = proj * view * model * vec4(aPos * scale, 1.0);
 	FragPos = vec3(model * vec4(aPos, 1.0)); // Transform position to world space changed
     Normal = mat3(transpose(inverse(model))) * aNormal; // Transform normal to world space changed
-	thisColor = aColor * scale;
-	texCoord = aTex;
+	//thisColor = aColor * scale;
+	//texCoord = aTex;
 }
