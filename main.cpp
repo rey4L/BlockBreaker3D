@@ -366,6 +366,7 @@ int main() {
             renderPauseMenu();
 
             if (resetGame) {
+                score = 0;
                 audio.stopBackgroundMusic();
                 resetGameState(audio); // Add immersion by also resetting the game audio upon restart
                 resetGame = false;
@@ -376,15 +377,16 @@ int main() {
             renderGameOverMenu();
 
             if (resetGame) {
+                score = 0;
                 resetGameState(audio);
                 resetGame = false;
-                score = 0;
             }
         }
 
         else {
-            updateScore();
 
+            updateScore();
+            
             if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape))) {
                 isPaused = true;
             }
@@ -483,7 +485,9 @@ int main() {
                 if (!cube.isDestroyed && cube.collidesWith(spherePosition, sphereRadius)) {
                     cube.isDestroyed = true;
                     audio.playCollisionSound();
-                    score += 30;
+                    
+                    int points = 300;
+                    incrementScore(points);
 
                     // Calculate the collision normal
                     glm::vec3 collisionNormal = glm::normalize(spherePosition - cube.position);

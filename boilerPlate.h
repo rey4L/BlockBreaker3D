@@ -69,5 +69,6 @@ void setupViewport(int width, int height);
 void resetGameState(Audio& audio);
 void applyPowerUp(std::vector<Cube>& cubes);
 bool areAllBlocksDestroyed(const std::vector<Cube>& cubes);
+void incrementScore(int points);
 
 #endif

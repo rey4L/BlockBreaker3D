@@ -38,11 +38,13 @@ void setupViewport(int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-int multiHitCount = 0;
+int multiHitCount = 0; //variable to track multi-hit blocks
 
 void resetGameState(Audio& audio) {
     // Reset the pause menu flag
     isPaused = false;
+    //score = 0;
+    std::cout << "Score reset to 0" << std::endl;
 
     // Reset bgm
     if (!audio.isBackgroundMusicPlaying) {
@@ -62,6 +64,8 @@ void resetGameState(Audio& audio) {
     ball_velocity_z = 0.0f;
 
     position_y = -2.0f;
+
+    cubes.clear();
 
     // Reset the blocks
     for (auto& cube : cubes) {
@@ -84,6 +88,7 @@ void resetGameState(Audio& audio) {
 
     // Reset multi hit counter
     multiHitCount = 0;
+    //score = 0;
    
     // Ensure the game is not paused or marked as over
     isPaused = false;
@@ -116,4 +121,8 @@ bool areAllBlocksDestroyed(const std::vector<Cube>& cubes) {
         }
     }
     return true;
+}
+
+void incrementScore(int points) {
+    score += points;
 }

@@ -5,6 +5,7 @@ bool isPaused = false;
 bool isGameOver = false; 
 bool resetGame = false;
 bool showHelp = false;
+
 int score = 0;
 
 float backgroundMusicVolume = 0.25f;
