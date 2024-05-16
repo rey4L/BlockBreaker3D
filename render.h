@@ -14,8 +14,6 @@ struct PaddleState {
 };
 
 void key(GLFWwindow* window, int k, int s, int action, int mods);
-void updateRotation(float& rotation, double& prevTime, const double currentTime, const float rotationSpeed, const double timeInterval);
-void bounce(const double currentTime, double previousTime, float& gravity, float& position, float& velocity, float& damping, float& groundLevel, float& minimumVelocity, int& bounceCount, const int maxBounces);
 void updatePaddlePosition(PaddleState* paddleState, double deltaTime);
 
 #endif

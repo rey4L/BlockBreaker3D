@@ -62,6 +62,24 @@ glm::vec3 cubeColors[12] = {
     glm::vec3(0.0f, 0.5f, 1.0f),   // Blueish-cyan
 };
 
+// Define colors for each object changed
+glm::vec3 cubeColor = glm::vec3(1.0, 0.0, 0.0); // Red changed 
+glm::vec3 paddleColor = glm::vec3(0.741, 0.718, 0.420); // Green changed 
+glm::vec3 ballColor = glm::vec3(0.300, 1.196, 1.800); // Blue changed
+
+glm::vec3 lightPos(5.0f, 0.0f, -20.0f);  // changed 
+glm::vec3 lightColor(0.85f, 0.85f, 0.85f); // changed
+glm::vec3 ambientColor(0.0f, 0.0f, 0.2f); // changed 
+
+float ambientStrength = 0.2f; // changed 
+float specularStrength = 2.0f; // changed 
+float shininess = 2.0f; // changed 
+
+// PBR properties
+float metallic = 5.5f;                          
+float roughness = 80.0f;                         
+float ao = 1.65f;
+
 int main() {
 
     initializeGLFW();
@@ -84,7 +102,6 @@ int main() {
 
     // Compile shaders
     Shader shaderProgram("default.vert", "default.frag");
-    Shader modelShader("model.vert", "model.frag");
 
     VAO VAO1;
     VAO1.Bind();
@@ -208,19 +225,6 @@ int main() {
         // Clean the back buffer and assign the new color to it
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Define colors for each object changed
-        glm::vec3 cubeColor = glm::vec3(1.0, 0.0, 0.0); // Red changed 
-        glm::vec3 paddleColor = glm::vec3(1.0, 1.0, 1.0); // Green changed 
-        glm::vec3 ballColor = glm::vec3(0.0, 0.0, 1.0); // Blue changed
-
-        glm::vec3 lightPos(0.0f, 0.0f, 0.0f);  // changed 
-        glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // changed 
-        glm::vec3 ambientColor(0.2f, 0.2f, 0.2f); // changed 
-        float ambientStrength = 0.0f; // changed 
-        float specularStrength = 0.0f; // changed 
-        float shininess = 0.0f; // changed 
-
-
         // Tell OpenGL which Shader Program we want to use
         shaderProgram.Activate();
 
@@ -244,29 +248,6 @@ int main() {
 
         int projLoc = glGetUniformLocation(shaderProgram.ID, "proj");
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
-
-        // Set lighting uniforms
-        int lightPosLoc = glGetUniformLocation(shaderProgram.ID, "lightPos");
-        glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
-
-        int lightColorLoc = glGetUniformLocation(shaderProgram.ID, "lightColor");
-        glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
-
-        int viewPosLoc = glGetUniformLocation(shaderProgram.ID, "viewPos");
-        glUniform3fv(viewPosLoc, 1, glm::value_ptr(glm::vec3(tra_x, position_y, tra_z))); // Assuming the camera follows the ball
-
-        int ambientColorLoc = glGetUniformLocation(shaderProgram.ID, "ambientColor");
-        glUniform3fv(ambientColorLoc, 1, glm::value_ptr(ambientColor));
-
-        int ambientStrengthLoc = glGetUniformLocation(shaderProgram.ID, "ambientStrength");
-        glUniform1f(ambientStrengthLoc, ambientStrength);
-
-        int specularStrengthLoc = glGetUniformLocation(shaderProgram.ID, "specularStrength");
-        glUniform1f(specularStrengthLoc, specularStrength);
-
-        int shininessLoc = glGetUniformLocation(shaderProgram.ID, "shininess");
-        glUniform1f(shininessLoc, shininess);
-
 
         // Scale all axes by 65%
         glUniform1f(uniID, 0.5f);
@@ -348,6 +329,39 @@ int main() {
 
         int sphereProjLoc = glGetUniformLocation(shaderProgram.ID, "proj");
         glUniformMatrix4fv(sphereProjLoc, 1, GL_FALSE, glm::value_ptr(sphereProj));
+
+        // Set lighting uniforms
+        int lightPosLoc = glGetUniformLocation(shaderProgram.ID, "lightPos");
+        glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
+
+        int lightColorLoc = glGetUniformLocation(shaderProgram.ID, "lightColor");
+        glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
+
+        int viewPosLoc = glGetUniformLocation(shaderProgram.ID, "viewPos");
+        glUniform3fv(viewPosLoc, 1, glm::value_ptr(glm::vec3(tra_x, position_y, tra_z))); // Assuming the camera follows the ball
+
+        int ambientColorLoc = glGetUniformLocation(shaderProgram.ID, "ambientColor");
+        glUniform3fv(ambientColorLoc, 1, glm::value_ptr(ambientColor));
+
+        int ambientStrengthLoc = glGetUniformLocation(shaderProgram.ID, "ambientStrength");
+        glUniform1f(ambientStrengthLoc, ambientStrength);
+
+        int specularStrengthLoc = glGetUniformLocation(shaderProgram.ID, "specularStrength");
+        glUniform1f(specularStrengthLoc, specularStrength);
+
+        int shininessLoc = glGetUniformLocation(shaderProgram.ID, "shininess");
+        glUniform1f(shininessLoc, shininess);
+
+        // Retrieve uniform locations
+        //GLint albedoLoc = glGetUniformLocation(shaderProgram.ID, "albedo");
+        GLint metallicLoc = glGetUniformLocation(shaderProgram.ID, "metallic");
+        GLint roughnessLoc = glGetUniformLocation(shaderProgram.ID, "roughness");
+        GLint aoLoc = glGetUniformLocation(shaderProgram.ID, "ao");
+
+        //glUniform3fv(albedoLoc, 1, glm::value_ptr(albedo));
+        glUniform1f(metallicLoc, metallic);
+        glUniform1f(roughnessLoc, roughness);
+        glUniform1f(aoLoc, ao);
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -526,17 +540,13 @@ int main() {
     VAO1.Delete();
     VBO1.Delete();
     EBO1.Delete();
-    //block.Delete();
     VAO2.Delete();
     VBO2.Delete();
     EBO2.Delete();
-    //cuboid.Delete();
     VAO3.Delete();
 	VBO3.Delete();
 	EBO3.Delete();
-	//sphere.Delete();
     shaderProgram.Delete();
-    modelShader.Delete();
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

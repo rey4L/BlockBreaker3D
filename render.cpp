@@ -24,46 +24,11 @@ void key(GLFWwindow* window, int k, int s, int action, int mods)
     }
 }
 
-
-// Function to update rotation
-void updateRotation(float& rotation, double& previousTime, const double currentTime, const float rotationSpeed, const double timeInterval) {
-
-    if (currentTime - previousTime >= timeInterval) {
-        rotation += rotationSpeed;
-        previousTime = currentTime;
-    }
-}
-
-// Bounce pls
-void bounce(const double currentTime, double previousTime, float& gravity, float& position, float& velocity, float& damping, float& groundLevel, float& minimumVelocity, int& bounceCount, const int maxBounces) {
-
-    double deltaTime = currentTime - previousTime; // Calculate delta time
-    previousTime = currentTime;
-
-    position += velocity * deltaTime;
-    velocity += gravity * deltaTime;
-
-    // Check for bounce
-    if (position <= groundLevel) {
-        position = groundLevel;
-        if (abs(velocity) < minimumVelocity || bounceCount >= maxBounces)
-        {
-            velocity = 7.5f;
-            position = groundLevel;
-        }
-        else
-        {
-            velocity = velocity * -damping;
-            bounceCount++;
-        }
-    }
-}
-
 void updatePaddlePosition(PaddleState* paddleState, double deltaTime) {
     if (paddleState == nullptr) return;
 
-    float speed = 10.0f; // Speed of paddle movement
-    float edgeLimit = 3.0f; // How far the paddle can go to the left or right
+    float speed = 7.5f; // Speed of paddle movement
+    float edgeLimit = 2.0f; // How far the paddle can go to the left or right
     const float leftEdge = -edgeLimit;
     const float rightEdge = edgeLimit;
 

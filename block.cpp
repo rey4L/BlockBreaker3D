@@ -8,7 +8,7 @@ void Cube::render(Shader& shader, int& modelLoc, VAO& vao, const unsigned int* i
     model = glm::scale(model, glm::vec3(scale));
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     vao.Bind();
-    glDrawElements(GL_LINE_STRIP, indicesSize / sizeof(int), GL_UNSIGNED_INT, 0); // Draw the cubes as wireframes (n-1 lines)
+    glDrawElements(GL_TRIANGLES, indicesSize / sizeof(int), GL_UNSIGNED_INT, 0); // Draw the cubes as wireframes (n-1 lines)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 

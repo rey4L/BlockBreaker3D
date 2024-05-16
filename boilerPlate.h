@@ -14,6 +14,7 @@
 #include "block.h"
 #include "interface.h"
 #include "audio.h"
+#include "render.h"
 
 // Blocks postion within the window
 const float x = -0.2f;
