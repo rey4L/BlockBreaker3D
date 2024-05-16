@@ -21,9 +21,9 @@ const float y = -0.15f;
 const float z = -0.5f;
 
 // Window color values
-const float r = 0.01;
-const float g = 0.01;
-const float b = 0.01;
+const float r = 0.15;
+const float g = 0.15;
+const float b = 0.15;
 
 // Addition
 
@@ -60,11 +60,14 @@ extern glm::vec3 cubeColors[12];
 extern int currentColorIndex;
 extern std::vector<Cube> cubes;
 
+extern bool isTransitioning;
+
 void initializeGLFW();
 GLFWwindow* createGLFWWindow(int width, int height, const char* title);
 void initializeGLAD();
 void setupViewport(int width, int height);
 void resetGameState(Audio& audio);
 void applyPowerUp(std::vector<Cube>& cubes);
+bool areAllBlocksDestroyed(const std::vector<Cube>& cubes);
 
 #endif

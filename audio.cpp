@@ -5,8 +5,9 @@
 Audio::Audio() {
     engine = irrklang::createIrrKlangDevice();
     backgroundMusic = nullptr;
-    backgroundMusicVolume = 0.75f;
-    soundEffectsVolume = 0.50f;
+    backgroundMusicVolume = 0.25f;
+    soundEffectsVolume = 0.40f;
+    isBackgroundMusicPlaying = false;
 }
 
 // Destructor that will trigger when the local instance goes out of scope
@@ -20,6 +21,7 @@ void Audio::playBackgroundMusic() {
     if (engine) {
         backgroundMusic = engine->play2D("media/bgm.wav", true, false, true);
         backgroundMusic->setVolume(backgroundMusicVolume);
+        isBackgroundMusicPlaying = true;
     }
 }
 
@@ -32,6 +34,12 @@ void Audio::playCollisionSound() {
 void Audio::playResponseSound() {
     if (engine) {
         engine->play2D("media/beep.wav", false, false, true)->setVolume(soundEffectsVolume);
+    }
+}
+
+void Audio::playResetSound() {
+    if (engine) {
+        engine->play2D("media/reset.wav", false, false, true)->setVolume(soundEffectsVolume);
     }
 }
 
@@ -59,5 +67,6 @@ void Audio::stopBackgroundMusic() {
         backgroundMusic->stop();
         backgroundMusic->drop();
 		backgroundMusic = nullptr;
+        isBackgroundMusicPlaying = false;
     }
 }

@@ -14,7 +14,7 @@
 // Translation matrix values for the ball
 float tra_x = 0.0f;
 float tra_y = 0.0f;
-float tra_z = -10.0f; // z-value of the ball;
+float tra_z = -10.0f;
 
 // Rotation matrix values for the ball
 const float rot_x = 0.0f;
@@ -26,7 +26,7 @@ float ball_velocity_x = 5.0f;
 float ball_velocity_y = 5.0f;
 float ball_velocity_z = 0.0f;
 
-float position_y = -2.0f; // Initial Y position
+float position_y = -2.0f; // Initial Y position (of the ball)
 
 // Define the game world boundaries
 const float gameWorldMinX = -2.1f;
@@ -39,6 +39,8 @@ const float gameWorldZ = -10.0f;
 const float blockSpacingX = (gameWorldMaxX - gameWorldMinX) / 8.0f;
 const float blockSpacingY = (gameWorldMaxY - gameWorldMinY) / 4.0f;
 const float blockSize = 0.55f;
+
+bool isTransitioning = false; // Flag to be used with timer upon game level reset
 
 // Define an index to keep track of the current color
 int currentColorIndex = 0; 
@@ -63,7 +65,7 @@ glm::vec3 cubeColors[12] = {
 int main() {
 
     initializeGLFW();
-    GLFWwindow* window = createGLFWWindow(760, 760, "BrickBreaker3D");
+    GLFWwindow* window = createGLFWWindow(760, 760, "BlockBreaker3D");
     if (!window)
         return -1;
 
@@ -376,10 +378,12 @@ int main() {
             if (resetGame) {
                 resetGameState(audio);
                 resetGame = false;
+                score = 0;
             }
         }
 
         else {
+            updateScore();
 
             if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape))) {
                 isPaused = true;
@@ -479,10 +483,11 @@ int main() {
                 if (!cube.isDestroyed && cube.collidesWith(spherePosition, sphereRadius)) {
                     cube.isDestroyed = true;
                     audio.playCollisionSound();
+                    score += 30;
 
                     // Calculate the collision normal
                     glm::vec3 collisionNormal = glm::normalize(spherePosition - cube.position);
-                    
+
                     // Modify this to become 'multi-hit blocks'
                     applyPowerUp(cubes);
 
@@ -493,17 +498,24 @@ int main() {
                     ball_velocity_z = reflectedVelocity.z;
                 }
             }
+
+            bool allBlocksDestroyed = areAllBlocksDestroyed(cubes);
+            if (allBlocksDestroyed) {
+                audio.playResetSound();
+                resetGameState(audio);
+                resetGame = false;
+            }
         }
 
         //sphere.Bind();
-		VAO3.Bind();
+        VAO3.Bind();
         glDrawElements(GL_TRIANGLES, sphereIndices.size(), GL_UNSIGNED_INT, 0);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(window);
-        glfwPollEvents();   
+        glfwPollEvents();
     }
   
     // Cleanup

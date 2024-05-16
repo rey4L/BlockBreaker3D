@@ -11,10 +11,12 @@ public:
 	void playBackgroundMusic();
 	void playCollisionSound();
 	void playResponseSound();
+	void playResetSound();
 	void playGameOverSound();
 	void setBackgroundMusicVolume(float volume);
 	void setSoundEffectsVolume(float volume);
 	void stopBackgroundMusic();
+	bool isBackgroundMusicPlaying;
 
 private:
 	irrklang::ISoundEngine* engine;

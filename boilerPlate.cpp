@@ -38,14 +38,20 @@ void setupViewport(int width, int height) {
     glViewport(0, 0, width, height);
 }
 
+int multiHitCount = 0;
+
 void resetGameState(Audio& audio) {
     // Reset the pause menu flag
     isPaused = false;
 
     // Reset bgm
-    audio.playBackgroundMusic();
-    audio.setBackgroundMusicVolume(backgroundMusicVolume);
+    if (!audio.isBackgroundMusicPlaying) {
+        audio.playBackgroundMusic();
+        audio.setBackgroundMusicVolume(backgroundMusicVolume);
+    }
 
+    //audio.playBackgroundMusic();
+    
     // Reset the ball's position and velocity
     tra_x = 0.0f;
     tra_y = 0.35f;
@@ -55,7 +61,15 @@ void resetGameState(Audio& audio) {
     ball_velocity_y = 5.0f;
     ball_velocity_z = 0.0f;
 
-    position_y = 0.0f;
+    position_y = -2.0f;
+
+    // Reset the blocks
+    for (auto& cube : cubes) {
+        cube.isDestroyed = false;
+    }
+
+    // Reset the transition flag
+    isTransitioning = false;
 
     // Reset cube states (not destroyed)
     for (int row = 0; row < 4; ++row) {
@@ -68,6 +82,9 @@ void resetGameState(Audio& audio) {
         }
     }
 
+    // Reset multi hit counter
+    multiHitCount = 0;
+   
     // Ensure the game is not paused or marked as over
     isPaused = false;
     isGameOver = false;
@@ -75,6 +92,10 @@ void resetGameState(Audio& audio) {
 
 // Function to apply a power-up to a random block
 void applyPowerUp(std::vector<Cube>& cubes) {
+    if (multiHitCount >= 5) {
+        return;
+    }
+
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(0, cubes.size() - 1);
@@ -84,5 +105,15 @@ void applyPowerUp(std::vector<Cube>& cubes) {
     if (!cubes[randomIndex].isDestroyed) {
         // Apply power-up logic here
         cubes[randomIndex].color = glm::vec3(1.0f, 1.0f, 1.0f); // White
+        multiHitCount++;
     }
+}
+
+bool areAllBlocksDestroyed(const std::vector<Cube>& cubes) {
+    for (const auto& cube : cubes) {
+        if (!cube.isDestroyed) {
+            return false;
+        }
+    }
+    return true;
 }

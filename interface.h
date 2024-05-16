@@ -11,6 +11,7 @@ extern bool isPaused;
 extern bool isGameOver;
 extern bool resetGame;
 extern bool showHelp;
+extern int score;
 
 extern float backgroundMusicVolume;
 extern float soundEffectsVolume;
@@ -18,6 +19,7 @@ extern float soundEffectsVolume;
 void renderMenu();
 void renderHelpWindow();
 void renderPauseMenu();
+void updateScore();
 void renderGameOverMenu();
 
 #endif

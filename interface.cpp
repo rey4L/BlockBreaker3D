@@ -5,9 +5,10 @@ bool isPaused = false;
 bool isGameOver = false; 
 bool resetGame = false;
 bool showHelp = false;
+int score = 0;
 
-float backgroundMusicVolume = 0.75f;
-float soundEffectsVolume = 0.50f;
+float backgroundMusicVolume = 0.25f;
+float soundEffectsVolume = 0.40f;
 
 void renderMenu() {
     ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
@@ -221,6 +222,13 @@ void renderPauseMenu() {
     ImGui::End();
 }
 
+void updateScore() {
+    ImGui::Begin("Score", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::SetWindowPos(ImVec2(5, 10));
+    ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Score: %d", score);
+    ImGui::End();
+}
+
 void renderGameOverMenu() {
     if (!isGameOver) return;
 
@@ -229,13 +237,19 @@ void renderGameOverMenu() {
     ImGui::SetWindowPos(ImVec2(225, 270));
 
     float windowWidth = ImGui::GetWindowSize().x;
+    
     float textWidth = ImGui::CalcTextSize("GAME OVER").x;
+    ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.20f);
     ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
 
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-    ImGui::Text("\n\n\nGAME OVER");
+    ImGui::Text("GAME OVER");
 	ImGui::PopStyleColor();
-    
+
+    ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.2950f);
+    float scoreWidth = ImGui::CalcTextSize("Final score:").x;
+    ImGui::SetCursorPosX((windowWidth - scoreWidth) * 0.44f);
+    ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Final Score: %d", score);
 
     ImVec2 buttonSize(120, 30);
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
