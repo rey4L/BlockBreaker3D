@@ -96,7 +96,7 @@ void main() {
     
     // Gamma correction
     color = color / (color + vec3(1.0));
-    color = pow(color, vec3(1.0 / 4.5));
+    color = pow(color, vec3(1.0 / 3.0));
     
     FragColor = vec4(color, 1.0);
 }

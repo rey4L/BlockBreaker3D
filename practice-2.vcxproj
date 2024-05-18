@@ -165,6 +165,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="interface.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="particleSystem.cpp" />
     <ClCompile Include="render.cpp" />
     <ClCompile Include="shaderClass.cpp" />
     <ClCompile Include="stb.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="imgui\imstb_rectpack.h" />
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
+    <ClInclude Include="particleSystem.h" />
     <ClInclude Include="render.h" />
     <ClInclude Include="shaderClass.h" />
     <ClInclude Include="Texture.h" />
@@ -203,6 +205,8 @@
     <None Include="model.frag" />
     <None Include="model.vert" />
     <None Include="models\colored-paddle.gltf" />
+    <None Include="particle.frag" />
+    <None Include="particle.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="block-tex.png" />

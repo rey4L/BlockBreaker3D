@@ -247,9 +247,9 @@ void renderGameOverMenu() {
     ImGui::Text("GAME OVER");
 	ImGui::PopStyleColor();
 
-    ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.2950f);
+    ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.330f);
     float scoreWidth = ImGui::CalcTextSize("Final score:").x;
-    ImGui::SetCursorPosX((windowWidth - scoreWidth) * 0.44f);
+    ImGui::SetCursorPosX((windowWidth - scoreWidth) * 0.40f);
     ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Final Score: %d", score);
 
     ImVec2 buttonSize(120, 30);

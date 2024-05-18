@@ -10,6 +10,7 @@
 #include "render.h"
 #include <iostream>
 #include "audio.h"
+#include "particleSystem.h"
 
 // Translation matrix values for the ball
 float tra_x = 0.0f;
@@ -25,6 +26,9 @@ const float rot_z = 0.0f;
 float ball_velocity_x = 5.0f;
 float ball_velocity_y = 5.0f;
 float ball_velocity_z = 0.0f;
+
+// Ball speed
+float ball_speed = 7.5f;
 
 float position_y = -2.0f; // Initial Y position (of the ball)
 
@@ -67,18 +71,18 @@ glm::vec3 cubeColor = glm::vec3(1.0, 0.0, 0.0); // Red changed
 glm::vec3 paddleColor = glm::vec3(0.741, 0.718, 0.420); // Green changed 
 glm::vec3 ballColor = glm::vec3(0.300, 1.196, 1.800); // Blue changed
 
-glm::vec3 lightPos(5.0f, 0.0f, -20.0f);  // changed 
-glm::vec3 lightColor(0.85f, 0.85f, 0.85f); // changed
-glm::vec3 ambientColor(0.0f, 0.0f, 0.2f); // changed 
+glm::vec3 lightPos(5.0f, 200.0f, -15.0f);  // changed 
+glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // changed
+glm::vec3 ambientColor(0.2f, 0.2f, 0.2f); // changed 
 
 float ambientStrength = 0.2f; // changed 
 float specularStrength = 2.0f; // changed 
 float shininess = 2.0f; // changed 
 
 // PBR properties
-float metallic = 5.5f;                          
-float roughness = 80.0f;                         
-float ao = 1.65f;
+float metallic = 3.25f;                          
+float roughness = 0.2f;                         
+float ao = 0.8f;
 
 int main() {
 
@@ -100,8 +104,14 @@ int main() {
     // Specify the viewport of OpenGL in the Window
     setupViewport(750, 750);
 
+    randomizeTrajectory(ball_speed);
+
+    // Print the randomized velocities for debugging
+    std::cout << "Randomized Ball Velocity: x=" << ball_velocity_x << " y=" << ball_velocity_y << std::endl;
+
     // Compile shaders
     Shader shaderProgram("default.vert", "default.frag");
+    ParticleSystem particleSystem("particle.vert", "particle.frag");
 
     VAO VAO1;
     VAO1.Bind();
@@ -181,8 +191,9 @@ int main() {
     EBO EBO3(sphereIndices.data(), sphereIndices.size() * sizeof(unsigned int));
 
     //Link vertex attributes
-    VAO3.LinkAttrib(VBO3, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
-    VAO3.LinkAttrib(VBO3, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    VAO3.LinkAttrib(VBO3, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+    VAO3.LinkAttrib(VBO3, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    VAO3.LinkAttrib(VBO3, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
     VAO3.Unbind();
     VBO3.Unbind();
@@ -270,9 +281,9 @@ int main() {
         double deltaTime = currentTime - lastTime;
         lastTime = currentTime;
 
+        
         PaddleState* paddleState = reinterpret_cast<PaddleState*>(glfwGetWindowUserPointer(window));
-        updatePaddlePosition(paddleState, deltaTime);
-
+        
         // Set paddle color uniform
         glUniform3fv(objectColorLoc, 1, glm::value_ptr(paddleColor));
 
@@ -301,6 +312,10 @@ int main() {
         int PaddleProjLoc = glGetUniformLocation(shaderProgram.ID, "proj");
         glUniformMatrix4fv(PaddleProjLoc, 1, GL_FALSE, glm::value_ptr(PaddleProj));
 
+        updatePaddlePosition(paddleState, deltaTime, particleSystem);
+        particleSystem.update(deltaTime);
+        particleSystem.draw(PaddleView, PaddleProj);
+
         //cuboid.Bind();
         VAO2.Bind();
         glDrawElements(GL_TRIANGLES, totalIndices, GL_UNSIGNED_INT, 0);
@@ -316,19 +331,6 @@ int main() {
 
         // Set ball color uniform
         glUniform3fv(objectColorLoc, 1, glm::value_ptr(ballColor)); //changed
-
-        //sphereModel = glm::rotate(sphereModel, glm::radians(rotation), glm::vec3(rot_x, rot_y, rot_z));
-        sphereView = glm::translate(sphereView, spherePosition);
-        sphereProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
-
-        int sphereModelLoc = glGetUniformLocation(shaderProgram.ID, "model");
-        glUniformMatrix4fv(sphereModelLoc, 1, GL_FALSE, glm::value_ptr(sphereModel));
-
-        int sphereViewLoc = glGetUniformLocation(shaderProgram.ID, "view");
-        glUniformMatrix4fv(sphereViewLoc, 1, GL_FALSE, glm::value_ptr(sphereView));
-
-        int sphereProjLoc = glGetUniformLocation(shaderProgram.ID, "proj");
-        glUniformMatrix4fv(sphereProjLoc, 1, GL_FALSE, glm::value_ptr(sphereProj));
 
         // Set lighting uniforms
         int lightPosLoc = glGetUniformLocation(shaderProgram.ID, "lightPos");
@@ -362,6 +364,20 @@ int main() {
         glUniform1f(metallicLoc, metallic);
         glUniform1f(roughnessLoc, roughness);
         glUniform1f(aoLoc, ao);
+
+        //sphereModel = glm::rotate(sphereModel, glm::radians(rotation), glm::vec3(rot_x, rot_y, rot_z));
+        sphereView = glm::translate(sphereView, spherePosition);
+        sphereProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
+
+        int sphereModelLoc = glGetUniformLocation(shaderProgram.ID, "model");
+        glUniformMatrix4fv(sphereModelLoc, 1, GL_FALSE, glm::value_ptr(sphereModel));
+
+        int sphereViewLoc = glGetUniformLocation(shaderProgram.ID, "view");
+        glUniformMatrix4fv(sphereViewLoc, 1, GL_FALSE, glm::value_ptr(sphereView));
+
+        int sphereProjLoc = glGetUniformLocation(shaderProgram.ID, "proj");
+        glUniformMatrix4fv(sphereProjLoc, 1, GL_FALSE, glm::value_ptr(sphereProj));
+
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
