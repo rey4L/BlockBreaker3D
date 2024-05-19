@@ -38,27 +38,9 @@ void setupViewport(int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void randomizeTrajectory(float speed) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_real_distribution<> distr_x(-1.0, 1.0);
-    static std::uniform_real_distribution<> distr_y(0.1, 1.0);
-
-	// Randomize ball's initial velocities
-    glm::vec2 initialVelocity;
-
-    // Ensure the initial velocity is non-zero and has a reasonable magnitude
-    do {
-        initialVelocity.x = distr_x(gen);
-        initialVelocity.y = distr_y(gen);
-    } while (glm::length(initialVelocity) < 0.1f);  // Avoid very small magnitudes
-
-    // Normalize the vector to make it a unit vector and then scale by speed
-    initialVelocity = glm::normalize(initialVelocity) * speed;
-
-    // Set the ball's velocity
-    ball_velocity_x = initialVelocity.x;
-    ball_velocity_y = initialVelocity.y;
+void colorBufferInit(float r, float g, float b) {
+	glClearColor(r, g, b, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 int multiHitCount = 0; //variable to track multi-hit blocks
@@ -118,36 +100,4 @@ void resetGameState(Audio& audio) {
     // Ensure the game is not paused or marked as over
     isPaused = false;
     isGameOver = false;
-}
-
-// Function to apply a power-up to a random block
-void applyPowerUp(std::vector<Cube>& cubes) {
-    if (multiHitCount >= 5) {
-        return;
-    }
-
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, cubes.size() - 1);
-
-    int randomIndex = dis(gen);
-
-    if (!cubes[randomIndex].isDestroyed) {
-        // Apply power-up logic here
-        cubes[randomIndex].color = glm::vec3(1.0f, 1.0f, 1.0f); // White
-        multiHitCount++;
-    }
-}
-
-bool areAllBlocksDestroyed(const std::vector<Cube>& cubes) {
-    for (const auto& cube : cubes) {
-        if (!cube.isDestroyed) {
-            return false;
-        }
-    }
-    return true;
-}
-
-void incrementScore(int points) {
-    score += points;
 }

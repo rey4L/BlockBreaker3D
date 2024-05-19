@@ -10,7 +10,6 @@
 #include <glm/glm/gtc/constants.hpp>
 #include <vector>
 #include <algorithm>
-#include <random>
 #include "block.h"
 #include "interface.h"
 #include "audio.h"
@@ -25,8 +24,6 @@ const float z = -0.5f;
 const float r = 0.15;
 const float g = 0.15;
 const float b = 0.15;
-
-// Addition
 
 // Translation matrix values for the ball
 extern float tra_x;
@@ -70,10 +67,7 @@ void initializeGLFW();
 GLFWwindow* createGLFWWindow(int width, int height, const char* title);
 void initializeGLAD();
 void setupViewport(int width, int height);
-void randomizeTrajectory(float speed);
+void colorBufferInit(float r, float g, float b);
 void resetGameState(Audio& audio);
-void applyPowerUp(std::vector<Cube>& cubes);
-bool areAllBlocksDestroyed(const std::vector<Cube>& cubes);
-void incrementScore(int points);
 
 #endif

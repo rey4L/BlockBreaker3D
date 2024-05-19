@@ -11,6 +11,24 @@ int score = 0;
 float backgroundMusicVolume = 0.25f;
 float soundEffectsVolume = 0.40f;
 
+void imguiInit(GLFWwindow* window) {
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+
+    ImFont* myFont = io.Fonts->AddFontFromFileTTF("font/Minecraft.ttf", 15.0f); // Custom font
+    io.FontDefault = myFont;
+}
+
+void imguiNewFrame() {
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+}
+
 void renderMenu() {
     ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
     ImGui::SetWindowSize(ImVec2(380, 250));
@@ -275,4 +293,10 @@ void renderGameOverMenu() {
 
     ImGui::PopStyleVar();
     ImGui::End();
+}
+
+void imguiCleanup() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }

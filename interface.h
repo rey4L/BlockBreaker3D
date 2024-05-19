@@ -16,10 +16,13 @@ extern int score;
 extern float backgroundMusicVolume;
 extern float soundEffectsVolume;
 
+void imguiInit(GLFWwindow* window);
+void imguiNewFrame();
 void renderMenu();
 void renderHelpWindow();
 void renderPauseMenu();
 void updateScore();
 void renderGameOverMenu();
+void imguiCleanup();
 
 #endif

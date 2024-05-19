@@ -15,6 +15,9 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
+#include <random>
+
+extern int multiHitCount; //variable to track multi-hit blocks
 
 class Cube {
 public:
@@ -27,5 +30,8 @@ public:
 	void render(Shader& shader, int& modelLoc, VAO& vao, const unsigned int* indices, size_t indicesSize);
 	bool collidesWith(glm::vec3 point, float radius);
 };
+
+void applyPowerUp(std::vector<Cube>& cubes);
+bool areAllBlocksDestroyed(const std::vector<Cube>& cubes);
 
 #endif

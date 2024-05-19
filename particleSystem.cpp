@@ -7,7 +7,7 @@ ParticleSystem::ParticleSystem(const char* vertexPath, const char* fragmentPath)
     glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Particle) * 1000, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Particle) * 10000, NULL, GL_DYNAMIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, position));
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, velocity));
     glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, lifespan));
@@ -19,8 +19,13 @@ ParticleSystem::ParticleSystem(const char* vertexPath, const char* fragmentPath)
     glBindVertexArray(0);
 }
 
+void ParticleSystem::setColor(glm::vec4 color) {
+    int colorLoc = glGetUniformLocation(shader.ID, "particleColor");
+    glUniform4fv(colorLoc, 1, glm::value_ptr(color));
+}
+
 void ParticleSystem::addParticle(glm::vec3 position, glm::vec3 velocity, float lifespan, float size) {
-    Particle particle = { position, velocity, lifespan, size };
+    Particle particle = { position, velocity, lifespan, size, 1.0f };
     particles.push_back(particle);
 }
 
@@ -28,6 +33,7 @@ void ParticleSystem::update(float deltaTime) {
     for (auto it = particles.begin(); it != particles.end();) {
         it->position += it->velocity * deltaTime;
         it->lifespan -= deltaTime;
+        it->fade = it->lifespan / 0.5f;
         if (it->lifespan <= 0.0f) {
             it = particles.erase(it);
         }
@@ -55,7 +61,10 @@ void ParticleSystem::draw(glm::mat4 view, glm::mat4 projection) {
 
         glDrawArrays(GL_POINTS, 0, particles.size());
     }*/
-    glDrawArrays(GL_POINTS, 0, particles.size());
+    GLfloat lineWidth = 10.0f;
+
+    glLineWidth(lineWidth);
+    glDrawArrays(GL_LINES, 0, particles.size());
 
    /* glDrawArrays(GL_POINTS, 0, particles.size());*/
     glBindVertexArray(0);

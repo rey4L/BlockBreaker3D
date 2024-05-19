@@ -13,6 +13,7 @@ struct Particle {
     glm::vec3 velocity;
     float lifespan;
     float size;
+    float fade;
 };
 
 class ParticleSystem {
@@ -22,6 +23,7 @@ public:
     Shader shader;
 
     ParticleSystem(const char* vertexPath, const char* fragmentPath);
+    void setColor(glm::vec4 color);
     void addParticle(glm::vec3 position, glm::vec3 velocity, float lifespan, float size);
     void update(float deltaTime);
     void draw(glm::mat4 view, glm::mat4 projection);

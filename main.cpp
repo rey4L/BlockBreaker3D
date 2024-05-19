@@ -27,6 +27,11 @@ float ball_velocity_x = 5.0f;
 float ball_velocity_y = 5.0f;
 float ball_velocity_z = 0.0f;
 
+// Paddle constants
+float paddleWidth = 0.60f;
+float paddleHeight = 0.25f;
+float paddleDepth = 0.25;
+
 // Ball speed
 float ball_speed = 7.5f;
 
@@ -112,6 +117,8 @@ int main() {
     // Compile shaders
     Shader shaderProgram("default.vert", "default.frag");
     ParticleSystem particleSystem("particle.vert", "particle.frag");
+
+    particleSystem.setColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
     VAO VAO1;
     VAO1.Bind();
@@ -218,29 +225,17 @@ int main() {
     }
 
     //Initialize imgui
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-
-    ImFont* myFont = io.Fonts->AddFontFromFileTTF("font/Minecraft.ttf", 15.0f); // Custom font
-    io.FontDefault = myFont;
+    imguiInit(window);
 
     // Main while loop
     while (!glfwWindowShouldClose(window)) {
-        // Specify the color of the background
-        glClearColor(r, g, b, 1.0f);
+      
+        colorBufferInit(r, g, b);
 
-        // Clean the back buffer and assign the new color to it
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Tell OpenGL which Shader Program we want to use
         shaderProgram.Activate();
 
         // Set object color uniforms changed
-        int objectColorLoc = glGetUniformLocation(shaderProgram.ID, "objectColor"); //changed
+        int objectColorLoc = glGetUniformLocation(shaderProgram.ID, "objectColor");
 
         // -- Block related code --
         glm::mat4 model;
@@ -380,9 +375,7 @@ int main() {
 
 
         // Start the Dear ImGui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        imguiNewFrame();
 
         if (showMenu || showHelp) {
             renderMenu();
@@ -421,94 +414,14 @@ int main() {
                 isPaused = true;
             }
 
-            // Update ball position
-            tra_x += ball_velocity_x * deltaTime;
-            position_y += ball_velocity_y * deltaTime;
-            tra_z += ball_velocity_z * deltaTime;
-
-            const float collisionBuffer = 0.0f;
-            float paddleWidth = 0.60f; // Needs to be adjusted
-            float paddleHeight = 0.25f;
-            float paddleDepth = 0.25;
-
-            // Scene boundaries
-            float left_boundary = -2.5f;
-            float right_boundary = 2.5f;
-            float top_boundary = 2.5f;
-            float bottom_boundary = -3.5f;
-            float front_boundary = -15.0f;
-            float back_boundary = -5.0f;
-
-            if (tra_x <= left_boundary + collisionBuffer) {
-                tra_x = left_boundary + collisionBuffer;  // Correct position if boundary is crossed
-                ball_velocity_x = -ball_velocity_x;
-                audio.playResponseSound();
-            }
-
-            if (tra_x >= right_boundary - collisionBuffer) {
-                tra_x = right_boundary - collisionBuffer;  // Correct position if boundary is crossed
-                ball_velocity_x = -ball_velocity_x;
-                audio.playResponseSound();
-            }
-
-            if (position_y <= bottom_boundary + collisionBuffer) {
-                std::cout << "Bottom collision" << std::endl;
-                audio.stopBackgroundMusic();
-                audio.playGameOverSound();
-                isGameOver = true;
-            }
-
-            if (position_y >= top_boundary - collisionBuffer) {
-                position_y = top_boundary - collisionBuffer;  // Adjust position to correct upon boundary collision
-                ball_velocity_y = -ball_velocity_y;
-                audio.playResponseSound();
-            }
-
-            if (tra_z <= front_boundary + collisionBuffer) {
-                tra_z = front_boundary + collisionBuffer;  // Adjust position to correct upon boundary collision
-                ball_velocity_z = -ball_velocity_z;
-            }
-            if (tra_z >= back_boundary - collisionBuffer) {
-                tra_z = back_boundary - collisionBuffer;  // Adjust position to correct upon boundary collision
-                ball_velocity_z = -ball_velocity_z;
-            }
+            updateBallPosition(tra_x, position_y, tra_z, ball_velocity_x, ball_velocity_y, ball_velocity_z,
+                deltaTime, audio, isGameOver);
 
             glm::vec3 velocity = glm::vec3(ball_velocity_x, ball_velocity_y, ball_velocity_z);
-
-            // Collision detection with the paddle
-            if (spherePosition.x >= paddlePos.x - paddleWidth &&
-                spherePosition.x <= paddlePos.x + paddleWidth &&
-                spherePosition.y >= paddlePos.y - paddleHeight &&
-                spherePosition.y <= paddlePos.y + paddleHeight &&
-                spherePosition.z >= paddlePos.z - paddleDepth &&
-                spherePosition.z <= paddlePos.z + paddleDepth) {
-
-                // Calculate collision normal based on the ball's position relative to the paddle's center
-                glm::vec3 relativePosition = spherePosition - paddlePos;
-                glm::vec3 collisionNormal = glm::vec3(0, 1, 0); // Default normal for top surface collision (horizontal)
-
-                audio.playResponseSound();
-
-                // If the ball is rolling along the paddle, force a bounce
-                if (std::abs(relativePosition.y) < sphereRadius) {
-                    collisionNormal = glm::vec3(0, 1, 0); // Force the ball to bounce upwards
-                }
-
-                else {
-                    collisionNormal = glm::normalize(relativePosition); // Reflect based on the relative position
-                }
-
-                glm::vec3 reflectedVelocity = glm::reflect(velocity, collisionNormal);
-
-                // Ensure the ball bounces up
-                reflectedVelocity.y = std::abs(reflectedVelocity.y); // Force the y-component to be positive
-
-                ball_velocity_x = reflectedVelocity.x;
-                ball_velocity_y = reflectedVelocity.y;
-                ball_velocity_z = reflectedVelocity.z;
-
-                std::cout << "Ball collided with the paddle." << std::endl;
-            }
+            
+            handlePaddleCollision(spherePosition, velocity, paddlePos,
+                sphereRadius, ball_velocity_x, ball_velocity_y,
+                ball_velocity_z, audio, paddleWidth, paddleHeight, paddleDepth);
 
             for (auto& cube : cubes) {
 
@@ -564,9 +477,7 @@ int main() {
 	EBO3.Delete();
     shaderProgram.Delete();
 
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    imguiCleanup();
     
     glfwDestroyWindow(window);
     glfwTerminate();
