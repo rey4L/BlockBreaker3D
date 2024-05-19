@@ -10,6 +10,9 @@
 #include "render.h"
 #include <iostream>
 #include "audio.h"
+#include "PowerUp.h"
+#include "vec3.h"
+#include <vector>
 #include "particleSystem.h"
 
 // Translation matrix values for the ball
@@ -88,6 +91,8 @@ float shininess = 2.0f; // changed
 float metallic = 3.25f;                          
 float roughness = 0.2f;                         
 float ao = 0.8f;
+
+
 
 int main() {
 
@@ -231,6 +236,38 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
       
         colorBufferInit(r, g, b);
+
+
+        // Define a list to hold power-ups
+        std::vector<PowerUp> powerUps;
+
+        // Generate some initial power-ups
+        generatePowerUps(powerUps);
+        // Render power-ups
+        for (auto& powerUp : powerUps) {
+            if (powerUp.isActive()) {
+                powerUp.render();
+            }
+        }
+        // Create an instance of the shared state
+        GameState gameState;
+
+        // Pass gameState as an argument to functions or classes that need it
+
+
+        for (auto& powerUp : powerUps) {
+            if (powerUp.isActive() && checkPowerUpCollision(vec3(tra_x, position_y, tra_z), sphereRadius, powerUp)) {
+                powerUp.applyPowerUp(gameState); // Pass gameState as an argument
+                powerUp.deactivate();
+            }
+        }
+
+
+
+
+
+        // Specify the color of the background
+        glClearColor(r, g, b, 1.0f);
 
         shaderProgram.Activate();
 
