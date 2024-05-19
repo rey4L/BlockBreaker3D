@@ -38,6 +38,29 @@ void setupViewport(int width, int height) {
     glViewport(0, 0, width, height);
 }
 
+void randomizeTrajectory(float speed) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_real_distribution<> distr_x(-1.0, 1.0);
+    static std::uniform_real_distribution<> distr_y(0.1, 1.0);
+
+	// Randomize ball's initial velocities
+    glm::vec2 initialVelocity;
+
+    // Ensure the initial velocity is non-zero and has a reasonable magnitude
+    do {
+        initialVelocity.x = distr_x(gen);
+        initialVelocity.y = distr_y(gen);
+    } while (glm::length(initialVelocity) < 0.1f);  // Avoid very small magnitudes
+
+    // Normalize the vector to make it a unit vector and then scale by speed
+    initialVelocity = glm::normalize(initialVelocity) * speed;
+
+    // Set the ball's velocity
+    ball_velocity_x = initialVelocity.x;
+    ball_velocity_y = initialVelocity.y;
+}
+
 int multiHitCount = 0; //variable to track multi-hit blocks
 
 void resetGameState(Audio& audio) {
@@ -51,8 +74,6 @@ void resetGameState(Audio& audio) {
         audio.playBackgroundMusic();
         audio.setBackgroundMusicVolume(backgroundMusicVolume);
     }
-
-    //audio.playBackgroundMusic();
     
     // Reset the ball's position and velocity
     tra_x = 0.0f;
@@ -64,6 +85,11 @@ void resetGameState(Audio& audio) {
     ball_velocity_z = 0.0f;
 
     position_y = -2.0f;
+    ball_speed = 7.5f;
+    randomizeTrajectory(ball_speed);
+
+    // Print the randomized velocities for debugging
+    std::cout << "Randomized Ball Velocity: x=" << ball_velocity_x << " y=" << ball_velocity_y << std::endl;
 
     cubes.clear();
 
@@ -88,7 +114,6 @@ void resetGameState(Audio& audio) {
 
     // Reset multi hit counter
     multiHitCount = 0;
-    //score = 0;
    
     // Ensure the game is not paused or marked as over
     isPaused = false;

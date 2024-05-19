@@ -90,6 +90,9 @@
     <ClCompile Include="audio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="particleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boilerPlate.h">
@@ -152,6 +155,9 @@
     <ClInclude Include="audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="particleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
@@ -174,6 +180,12 @@
     </None>
     <None Include="models\colored-paddle.gltf">
       <Filter>Resource Files\textures</Filter>
+    </None>
+    <None Include="particle.frag">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="particle.vert">
+      <Filter>Resource Files\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

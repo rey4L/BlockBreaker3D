@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <algorithm>
+#include "particleSystem.h"
 
 struct PaddleState {
 	float x_pos = 0.0f;
@@ -14,6 +15,6 @@ struct PaddleState {
 };
 
 void key(GLFWwindow* window, int k, int s, int action, int mods);
-void updatePaddlePosition(PaddleState* paddleState, double deltaTime);
+void updatePaddlePosition(PaddleState* paddleState, double deltaTime, ParticleSystem& particleSystem);
 
 #endif

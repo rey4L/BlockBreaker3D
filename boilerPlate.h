@@ -57,6 +57,9 @@ extern float ball_velocity_z;
 
 extern float position_y;
 
+// Ball speed
+extern float ball_speed;
+
 extern glm::vec3 cubeColors[12];
 extern int currentColorIndex;
 extern std::vector<Cube> cubes;
@@ -67,6 +70,7 @@ void initializeGLFW();
 GLFWwindow* createGLFWWindow(int width, int height, const char* title);
 void initializeGLAD();
 void setupViewport(int width, int height);
+void randomizeTrajectory(float speed);
 void resetGameState(Audio& audio);
 void applyPowerUp(std::vector<Cube>& cubes);
 bool areAllBlocksDestroyed(const std::vector<Cube>& cubes);

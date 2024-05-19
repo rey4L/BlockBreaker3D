@@ -24,7 +24,7 @@ void key(GLFWwindow* window, int k, int s, int action, int mods)
     }
 }
 
-void updatePaddlePosition(PaddleState* paddleState, double deltaTime) {
+void updatePaddlePosition(PaddleState* paddleState, double deltaTime, ParticleSystem& particleSystem) {
     if (paddleState == nullptr) return;
 
     float speed = 7.5f; // Speed of paddle movement
@@ -32,9 +32,28 @@ void updatePaddlePosition(PaddleState* paddleState, double deltaTime) {
     const float leftEdge = -edgeLimit;
     const float rightEdge = edgeLimit;
 
+    // Store the previous position
+    static glm::vec3 lastPaddlePos = glm::vec3(paddleState->x_pos, paddleState->y_pos, paddleState->z_pos);
+
     // Update the paddle's position based on its direction and the speed
     paddleState->x_pos += paddleState->direction * speed * deltaTime;
 
     // Ensure the paddle doesn't move beyond the edges of the play area
     paddleState->x_pos = std::max(leftEdge, std::min(paddleState->x_pos, rightEdge));
+
+    // Calculate current paddle position
+    glm::vec3 currentPaddlePos = glm::vec3(paddleState->x_pos, paddleState->y_pos, paddleState->z_pos);
+
+    // Emit particles if the paddle has moved
+    if (glm::length(currentPaddlePos - lastPaddlePos) > 0.0f) {
+        glm::vec3 velocity = glm::vec3(-1.0f, -0.5f, 0.0f);
+        float particleSize = 0.0f;
+        float particleLifespan = 0.25f;
+
+        particleSystem.addParticle(currentPaddlePos + glm::vec3(0.0f, -0.4f, 0.0f), velocity, particleLifespan, particleSize); // Left side
+        particleSystem.addParticle(currentPaddlePos + glm::vec3(0.8f, 0.0f, 0.0f), velocity, particleLifespan, particleSize); // Right side
+    }
+
+    // Update the last position
+    lastPaddlePos = currentPaddlePos;
 }
