@@ -10,6 +10,9 @@
 #include "render.h"
 #include <iostream>
 #include "audio.h"
+#include "PowerUp.h"
+#include "vec3.h"
+#include <vector>
 
 // Translation matrix values for the ball
 float tra_x = 0.0f;
@@ -79,6 +82,8 @@ float shininess = 2.0f; // changed
 float metallic = 5.5f;                          
 float roughness = 80.0f;                         
 float ao = 1.65f;
+
+
 
 int main() {
 
@@ -219,6 +224,36 @@ int main() {
 
     // Main while loop
     while (!glfwWindowShouldClose(window)) {
+
+
+        // Define a list to hold power-ups
+        std::vector<PowerUp> powerUps;
+
+        // Generate some initial power-ups
+        generatePowerUps(powerUps);
+        // Render power-ups
+        for (auto& powerUp : powerUps) {
+            if (powerUp.isActive()) {
+                powerUp.render();
+            }
+        }
+        // Create an instance of the shared state
+        GameState gameState;
+
+        // Pass gameState as an argument to functions or classes that need it
+
+
+        for (auto& powerUp : powerUps) {
+            if (powerUp.isActive() && checkPowerUpCollision(vec3(tra_x, position_y, tra_z), sphereRadius, powerUp)) {
+                powerUp.applyPowerUp(gameState); // Pass gameState as an argument
+                powerUp.deactivate();
+            }
+        }
+
+
+
+
+
         // Specify the color of the background
         glClearColor(r, g, b, 1.0f);
 
@@ -409,6 +444,8 @@ int main() {
             tra_x += ball_velocity_x * deltaTime;
             position_y += ball_velocity_y * deltaTime;
             tra_z += ball_velocity_z * deltaTime;
+
+
 
             const float collisionBuffer = 0.0f;
             float paddleWidth = 0.60f; // Needs to be adjusted
