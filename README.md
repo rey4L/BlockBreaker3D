@@ -1,10 +1,12 @@
 # BlockBreaker3D
 
-This game is designed as a semester project and built with the intention of bringing the clasic block breaker experience from my childhood into a 3D space. 
+BlockBreaker3D is a semester project that brings the classic block breaker game from my childhood into an immersive 3D environment.
 
 ## Features
 
-- **3D gameplay**: Experience the classic block breaker game in a whole new dimension.
+- **Immersive 3D gameplay**: Experience the classic block breaker game in a whole new dimension, complete with realistic sound effects for enhanced immersion.
+- **Intuitive interface**: Enjoy a user-friendly GUI that seamlessly integrates score tracking, making it easy to keep track of your progress and aim for high scores.
+- **Engaging audio**: Immerse yourself with sound effects for collisions, game over, level resets, and an exquisitely crafted main theme.
 
 ## Setup
 
@@ -38,7 +40,7 @@ Here’s how to do it on Windows:
 
 After setting the environment variable, restart Visual Studio so it recognizes the new value.
 
-## Acknowledgements
+## Attributions
 
-- Special thanks to Victor Gordon, his OpenGL tutorial [videos](<https://www.youtube.com/watch?v=XpBGwZNyUh0&list=PLPaoO-vpZnumdcb4tZc4x5Q-v7CkrQ6M->) were an invaluable resource during development.
-- This project was inspired by classic block breaker games (e.g. the one that came preinstalled on old BlackBerry devices) but reimagined in a 3D space.
+- Special thanks to Victor Gordon, his [OpenGL tutorial videos](<https://www.youtube.com/watch?v=XpBGwZNyUh0&list=PLPaoO-vpZnumdcb4tZc4x5Q-v7CkrQ6M->) and associated [repo](<https://github.com/VictorGordan/opengl-tutorials>) were an invaluable resource during development.
+- The sound effects used are from [pixabay](<https://pixabay.com/sound-effects/>). 
