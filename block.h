@@ -15,9 +15,19 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
+#include "vertices.h"
+#include "audio.h"
+#include "interface.h"
 #include <random>
 
-extern int multiHitCount; //variable to track multi-hit blocks
+extern int multiHitCount; //variable to track the blocks with power up potential
+extern float length; // Paddle length
+extern float radius; // Paddle radius
+
+extern float ball_speed; // Ball speed
+
+extern std::vector<GLfloat> pill_vertices;
+extern std::vector<GLuint> pill_indices;
 
 class Cube {
 public:
@@ -26,12 +36,12 @@ public:
 	bool isDestroyed;
 	glm::vec3 color;
 
-	Cube(glm::vec3 pos, float scl, const glm::vec3& col); // Object setter
+	Cube(glm::vec3 pos, float scl, const glm::vec3& col); 
 	void render(Shader& shader, int& modelLoc, VAO& vao, const unsigned int* indices, size_t indicesSize);
 	bool collidesWith(glm::vec3 point, float radius);
 };
 
-void applyPowerUp(std::vector<Cube>& cubes);
+void applyPowerUp(std::vector<Cube>& cubes, float& paddleWidth, float& length, Audio& audio);
 bool areAllBlocksDestroyed(const std::vector<Cube>& cubes);
 
 #endif

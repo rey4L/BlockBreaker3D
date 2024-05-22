@@ -11,6 +11,7 @@ public:
 
 	void Bind();
 	void Unbind();
+	void Update(const void* data, GLsizeiptr size);
 	void Delete();
 };
 

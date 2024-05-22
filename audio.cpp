@@ -37,6 +37,12 @@ void Audio::playResponseSound() {
     }
 }
 
+void Audio::playPowerUpSound() {
+    if (engine) {
+        engine->play2D("media/power-up.wav", false, false, true)->setVolume(soundEffectsVolume);
+    }
+}
+
 void Audio::playResetSound() {
     if (engine) {
         engine->play2D("media/reset.wav", false, false, true)->setVolume(soundEffectsVolume);

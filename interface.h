@@ -12,6 +12,10 @@ extern bool isGameOver;
 extern bool resetGame;
 extern bool showHelp;
 extern int score;
+extern bool showPowerUp;
+
+extern float messageTimer;
+extern const float MESSAGE_DURATION;
 
 extern float backgroundMusicVolume;
 extern float soundEffectsVolume;
@@ -22,6 +26,7 @@ void renderMenu();
 void renderHelpWindow();
 void renderPauseMenu();
 void updateScore();
+void showPowerUpMessage(float deltaTime);
 void renderGameOverMenu();
 void imguiCleanup();
 

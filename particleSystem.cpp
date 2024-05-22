@@ -33,8 +33,8 @@ void ParticleSystem::update(float deltaTime) {
     for (auto it = particles.begin(); it != particles.end();) {
         it->position += it->velocity * deltaTime;
         it->lifespan -= deltaTime;
-        it->fade = it->lifespan / 0.5f;
-        if (it->lifespan <= 0.0f) {
+        it->fade -= deltaTime / it->lifespan;
+        if (it->lifespan <= 0.0f || it->fade <= 0.1f) {
             it = particles.erase(it);
         }
         else {
@@ -61,10 +61,13 @@ void ParticleSystem::draw(glm::mat4 view, glm::mat4 projection) {
 
         glDrawArrays(GL_POINTS, 0, particles.size());
     }*/
-    GLfloat lineWidth = 10.0f;
+    /*GLfloat lineWidth = 10.0f;
+    glLineWidth(lineWidth);*/
 
-    glLineWidth(lineWidth);
-    glDrawArrays(GL_LINES, 0, particles.size());
+      // Adjust the value as needed
+    
+
+    glDrawArrays(GL_POINTS, 0, particles.size());
 
    /* glDrawArrays(GL_POINTS, 0, particles.size());*/
     glBindVertexArray(0);

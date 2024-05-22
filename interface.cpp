@@ -5,6 +5,7 @@ bool isPaused = false;
 bool isGameOver = false; 
 bool resetGame = false;
 bool showHelp = false;
+bool showPowerUp = false;
 
 int score = 0;
 
@@ -65,12 +66,11 @@ void renderMenu() {
 
     // Sound settings window
     if (ImGui::BeginPopupModal("Sound Settings", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
-        // Set the desired width of the popup window
+        
         float popupWidth = 400.0f;
         ImGui::SetWindowSize(ImVec2(popupWidth, 175.0f));
         ImGui::SetWindowPos(ImVec2(170.0f, 300.0f));
 
-        // Add spacing between the title and the first slider
         ImGui::Spacing();
         ImGui::Spacing();
         ImGui::Spacing();
@@ -86,7 +86,6 @@ void renderMenu() {
         
         ImGui::PopItemWidth();
 
-        // Add spacing between the sliders
         ImGui::Spacing();
         ImGui::Spacing();
 
@@ -100,7 +99,6 @@ void renderMenu() {
         soundEffectsVolume = sfxVolumePercent / 100.0f;
         ImGui::PopItemWidth();
 
-        // Add spacing between the last slider and the close button
         ImGui::Spacing();
         ImGui::Spacing();
         ImGui::Spacing();
@@ -128,11 +126,9 @@ void renderMenu() {
     ImGui::SetCursorPos(ImVec2(windowWidth - helpButtonSize.x - 10, ImGui::GetWindowHeight() - helpButtonSize.y - 10));
     
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.65f, 0.3f, 1.0f));
-    //ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.26f, 0.59f, 0.98f, 1.0f));
     if (ImGui::Button("?", helpButtonSize)) {
         showHelp = !showHelp;
     }
-    //ImGui::PopStyleColor();
 
     if (ImGui::IsItemHovered()) {
         ImGui::SetTooltip("Help");
@@ -180,7 +176,7 @@ void renderHelpWindow() {
     ImGui::Spacing();
 
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7523f, 0.343f, 0.0f, 1.0f));
-    ImGui::TextWrapped("Disclaimer: Collision detection may be inaccurate, causing occasional glitches.");
+    ImGui::TextWrapped("Note: Do not press A and D simultaneously as it will result in no movement.");
     ImGui::PopStyleColor();
 
     ImGui::Spacing();
@@ -198,7 +194,7 @@ void renderPauseMenu() {
     ImGui::SetWindowSize(ImVec2(320, 280));
     ImGui::SetWindowPos(ImVec2(215, 250));
 
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.2f, 0.2f, 1.0f)); // Lighter blue when hovered
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.2f, 0.2f, 0.2f, 1.0f)); // Gray when hovered
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.45f, 0.0f, 1.0f)); // Green when pressed
 
     float windowWidth = ImGui::GetWindowSize().x;
@@ -210,7 +206,7 @@ void renderPauseMenu() {
     ImVec2 buttonSize(120, 30);
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 
-    ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.4f); // Adjust the factor (0.4f) as needed
+    ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.4f); 
 
     ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
     if (ImGui::Button("RESUME", buttonSize)) {
@@ -218,7 +214,7 @@ void renderPauseMenu() {
     }
     ImGui::SetCursorPosX((windowWidth - ImGui::CalcTextSize("Resume").x) * 0.5f);
 
-    ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.55f); // Adjust the factor (0.6f) as needed
+    ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.55f); 
 
     ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
     if (ImGui::Button("RESTART", buttonSize)) {
@@ -226,7 +222,7 @@ void renderPauseMenu() {
     }
     ImGui::SetCursorPosX(windowWidth - ImGui::CalcTextSize("Restart").x * 0.5f);
 
-    ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.7f); // Adjust the factor (0.8f) as needed
+    ImGui::SetCursorPosY(ImGui::GetWindowHeight() * 0.7f); 
 
     ImGui::SetCursorPosX((windowWidth - buttonSize.x) * 0.5f);
     if (ImGui::Button("MAIN MENU", buttonSize)) {
@@ -246,6 +242,30 @@ void updateScore() {
     ImGui::SetWindowPos(ImVec2(5, 10));
     ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Score: %d", score);
     ImGui::End();
+}
+
+void showPowerUpMessage(float deltaTime) {
+    if (!showPowerUp) {
+        messageTimer = 0.0f;
+        return;
+    }
+
+    messageTimer += deltaTime;
+
+    if (messageTimer >= MESSAGE_DURATION) {
+        showPowerUp = false;
+        return;
+    }
+        ImGui::SetNextWindowPos(ImVec2(760 / 2, 760 / 2), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+        ImGui::SetNextWindowBgAlpha(0.8f);
+        ImGui::Begin("Power-Up Message", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
+
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255)); 
+        ImGui::Text("Power-Up Triggered!");
+        ImGui::Text("Your paddle size has increased!");
+        ImGui::PopStyleColor();
+
+        ImGui::End();
 }
 
 void renderGameOverMenu() {

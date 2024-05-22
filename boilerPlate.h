@@ -10,9 +10,11 @@
 #include <glm/glm/gtc/constants.hpp>
 #include <vector>
 #include <algorithm>
+#include "VBO.h"
 #include "block.h"
 #include "interface.h"
 #include "audio.h"
+#include "vertices.h"
 #include "render.h"
 
 // Blocks postion within the window
@@ -57,11 +59,18 @@ extern float position_y;
 // Ball speed
 extern float ball_speed;
 
+// Paddle related constants
+extern float paddleWidth; // percentage of the pill the ball sees
+extern float paddleHeight;
+extern float paddleDepth;
+
+// Set paddle radius and legth
+extern float radius;
+extern float length;
+
 extern glm::vec3 cubeColors[12];
 extern int currentColorIndex;
 extern std::vector<Cube> cubes;
-
-extern bool isTransitioning;
 
 void initializeGLFW();
 GLFWwindow* createGLFWWindow(int width, int height, const char* title);

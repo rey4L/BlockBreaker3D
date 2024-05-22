@@ -44,16 +44,16 @@ void updatePaddlePosition(PaddleState* paddleState, double deltaTime, ParticleSy
     // Calculate current paddle position
     glm::vec3 currentPaddlePos = glm::vec3(paddleState->x_pos, paddleState->y_pos, paddleState->z_pos);
 
-    glm::vec3 leftOffset = glm::vec3(-0.8f, 0.0f, 0.0f);
-    glm::vec3 rightOffset = glm::vec3(1.7f, 0.0f, 0.0f);
+    glm::vec3 leftOffset = glm::vec3(-0.99f, 0.0f, 0.0f);
+    glm::vec3 rightOffset = glm::vec3(1.29f, 0.0f, 0.0f);
 
-    // Emit particles if the paddle has moved
+    // REnder tracers when paddle is moved
     if (glm::length(currentPaddlePos - lastPaddlePos) > 0.0f) {
         glm::vec3 velocity = glm::vec3(-2.0f, 0.0f, 0.0f);
-        float particleSize = 2000.0f;
-        float particleLifespan = 0.25f;
+        float particleSize = 45.0f;
+        float particleLifespan = 0.1115f;
 
-        std::cout << "Particle Size: " << particleSize << std::endl;
+        glPointSize(particleSize);
         particleSystem.addParticle(currentPaddlePos + leftOffset, velocity, particleLifespan, particleSize); // Left side
         particleSystem.addParticle(currentPaddlePos + rightOffset, velocity, particleLifespan, particleSize); // Right side
     }
@@ -151,8 +151,6 @@ void handlePaddleCollision(glm::vec3& spherePosition, glm::vec3& velocity, glm::
         ball_velocity_x = reflectedVelocity.x;
         ball_velocity_y = reflectedVelocity.y;
         ball_velocity_z = reflectedVelocity.z;
-
-        std::cout << "Ball collided with the paddle." << std::endl;
     }
 }
 

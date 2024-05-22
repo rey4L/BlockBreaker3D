@@ -1,113 +1,5 @@
 #include"vertices.h"
 
-// Function to generate sphere vertices and indices
-//void generateSphere(float radius, unsigned int longitudeCount, unsigned int latitudeCount,
-//    std::vector<float>& vertices, std::vector<unsigned int>& indices) {
-//    vertices.clear();
-//    indices.clear();
-//
-//    // Generate vertices
-//    for (unsigned int lat = 0; lat <= latitudeCount; ++lat) {
-//        float theta = lat * M_PI / latitudeCount;
-//        float sinTheta = std::sin(theta);
-//        float cosTheta = std::cos(theta);
-//
-//        for (unsigned int lon = 0; lon <= longitudeCount; ++lon) {
-//            float phi = lon * 2 * M_PI / longitudeCount;
-//            float sinPhi = std::sin(phi);
-//            float cosPhi = std::cos(phi);
-//
-//            float x = cosPhi * sinTheta;
-//            float y = cosTheta;
-//            float z = sinPhi * sinTheta;
-//            float u = 1.0f - (float(lon) / longitudeCount);
-//            float v = 1.0f - (float(lat) / latitudeCount);
-//            //float v = -(theta / M_PI);
-//
-//            if (lon == longitudeCount) {
-//                u = 0.0f;
-//            }
-//
-//            vertices.push_back(x * radius);
-//            vertices.push_back(y * radius);
-//            vertices.push_back(z * radius);
-//            vertices.push_back(u);
-//            vertices.push_back(v);
-//        }
-//    }
-//
-//    // Generate indices
-//    for (unsigned int lat = 0; lat < latitudeCount; ++lat) {
-//        for (unsigned int lon = 0; lon < longitudeCount; ++lon) {
-//            unsigned int first = (lat * (longitudeCount + 1)) + lon;
-//            unsigned int second = first + longitudeCount + 1;
-//
-//            indices.push_back(first);
-//            indices.push_back(second);
-//            indices.push_back(first + 1);
-//
-//            indices.push_back(second);
-//            indices.push_back(second + 1);
-//            indices.push_back(first + 1);
-//        }
-//    }
-//}
-
-//void generateSphere(float radius, unsigned int longitudeCount, unsigned int latitudeCount,
-//    std::vector<float>& vertices, std::vector<unsigned int>& indices) {
-//    vertices.clear();
-//    indices.clear();
-//
-//    // Generate vertices and normals
-//    for (unsigned int lat = 0; lat <= latitudeCount; ++lat) {
-//        float theta = lat * M_PI / latitudeCount;
-//        float sinTheta = std::sin(theta);
-//        float cosTheta = std::cos(theta);
-//
-//        for (unsigned int lon = 0; lon <= longitudeCount; ++lon) {
-//            float phi = lon * 2 * M_PI / longitudeCount;
-//            float sinPhi = std::sin(phi);
-//            float cosPhi = std::cos(phi);
-//
-//            float x = cosPhi * sinTheta;
-//            float y = cosTheta;
-//            float z = sinPhi * sinTheta;
-//            float u = 1.0f - (float(lon) / longitudeCount);
-//            float v = 1.0f - (float(lat) / latitudeCount);
-//
-//            // Vertex position
-//            vertices.push_back(x * radius);
-//            vertices.push_back(y * radius);
-//            vertices.push_back(z * radius);
-//
-//            // Normal (normalized position vector for a sphere)
-//            vertices.push_back(x);
-//            vertices.push_back(y);
-//            vertices.push_back(z);
-//
-//            // Texture coordinates (if needed)
-//            vertices.push_back(u);
-//            vertices.push_back(v);
-//        }
-//    }
-//
-//    // Generate indices
-//    for (unsigned int lat = 0; lat < latitudeCount; ++lat) {
-//        for (unsigned int lon = 0; lon < longitudeCount; ++lon) {
-//            unsigned int first = (lat * (longitudeCount + 1)) + lon;
-//            unsigned int second = first + longitudeCount + 1;
-//
-//            indices.push_back(first);
-//            indices.push_back(second);
-//            indices.push_back(first + 1);
-//
-//            indices.push_back(second);
-//            indices.push_back(second + 1);
-//            indices.push_back(first + 1);
-//        }
-//    }
-//}
-
 void generateSphere(float radius, unsigned int longitudeCount, unsigned int latitudeCount,
     std::vector<float>& vertices, std::vector<unsigned int>& indices) {
     vertices.clear();
@@ -305,6 +197,14 @@ void generatePillIndices(std::vector<GLuint>& indices) {
     generateSphereIndices(indices);
 }
 
+void updatePaddleVertices(std::vector<GLfloat>& pill_vertices, std::vector<GLuint>& pill_indices, float radius, float length) {
+    pill_vertices.clear();
+    pill_indices.clear();
+
+    generatePillVertices(pill_vertices, radius, length);
+    generatePillIndices(pill_indices);
+}
+
 namespace Vertices {
 
     GLuint square_cube_indices[36] = {
@@ -353,43 +253,5 @@ namespace Vertices {
         -1.0f, -(0.5f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 1.0f,
         1.0f, -(0.5f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 0.0f,
         1.0f, (0.5f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 0.0f,
-    };
-
-    GLfloat paddle_vertices[192] = {
-        // Top face
-        -1.0f, (0.2f) / 2, 0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 0.0f,
-        -1.0f, -(0.2f) / 2, 0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 0.0f,
-        1.0f,  -(0.2f) / 2, 0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 1.0f,
-        1.0f,(0.2f) / 2, 0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 1.0f,
-
-        // Front face
-        -1.0f, (0.2f) / 2, 0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 0.0f,
-        -1.0f, (0.2f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 0.0f,
-        1.0f, (0.2f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 1.0f,
-        1.0f, (0.2f) / 2, 0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 1.0f,
-
-        // Left face
-        1.0f, (0.2f) / 2, 0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 0.0f,
-        1.0f, (0.2f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 0.0f,
-        1.0f,-(0.2f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 1.0f,
-        1.0f,-(0.2f) / 2, 0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 1.0f,
-
-        // Back face
-        1.0f, -(0.2f) / 2, 0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 0.0f,
-        -1.0f, -(0.2f) / 2, 0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 0.0f,
-        -1.0f, -(0.2f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 1.0f,
-        1.0f, -(0.2f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 1.0f,
-
-        // Right face
-        -1.0f, -(0.2f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 1.0f,
-        -1.0f, -(0.2f) / 2, 0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 1.0f,
-        -1.0f, (0.2f) / 2, 0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 0.0f,
-        -1.0f,(0.2f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 0.0f,
-
-        // Bottom face
-        -1.0f, (0.2f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 1.0f,
-        -1.0f, -(0.2f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 1.0f,
-        1.0f, -(0.2f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 1.0f, 0.0f,
-        1.0f,(0.2f) / 2, -0.5f, 0.83f, 0.70f, 0.44f, 0.0f, 0.0f,
     };
 }

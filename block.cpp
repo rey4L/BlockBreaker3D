@@ -60,8 +60,8 @@ bool Cube::collidesWith(glm::vec3 point, float radius) {
     return false;
 }
 
-// Function to apply a power-up to a random block
-void applyPowerUp(std::vector<Cube>& cubes) {
+// Function that designates random blocks the potential to activate a power up
+void applyPowerUp(std::vector<Cube>& cubes, float& paddleWidth, float& length, Audio& audio) {
     if (multiHitCount >= 5) {
         return;
     }
@@ -73,9 +73,35 @@ void applyPowerUp(std::vector<Cube>& cubes) {
     int randomIndex = dis(gen);
 
     if (!cubes[randomIndex].isDestroyed) {
-        // Apply power-up logic here
-        cubes[randomIndex].color = glm::vec3(1.0f, 1.0f, 1.0f); // White
+        cubes[randomIndex].color = glm::vec3(1.0f, 1.0f, 1.0f);
         multiHitCount++;
+
+        // 30% chance of getting a power-up from the randomly selected white blocks
+        std::uniform_real_distribution<>powerUpDis(0.0f, 1.0f);
+        float powerUpChance = powerUpDis(gen);
+        
+        if (powerUpChance <= 0.3f) 
+        {
+            std::uniform_int_distribution<> powerUpTypeDis(0, 1);
+            int powerUpType = powerUpTypeDis(gen);
+
+            if (powerUpType == 0) {
+                
+                // Increase paddle size and ball speed by 5.9%
+                float scaleFactor = 1.059f;
+                paddleWidth *= scaleFactor;
+                length *= scaleFactor;
+
+                ball_speed *= scaleFactor;
+
+                audio.playPowerUpSound();
+                updatePaddleVertices(pill_vertices, pill_indices, radius, length);
+
+                // Reset power-up notification flag and timer
+                showPowerUp = true;
+                messageTimer = 0.0f;
+            }
+        }
     }
 }
 

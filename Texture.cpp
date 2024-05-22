@@ -1,5 +1,7 @@
 #include"Texture.h"
 
+/* Not being used but keeping in the repo for future use? */
+
 Texture::Texture(const char* image, GLenum texType, GLenum texMap, GLenum slot, GLenum format, GLenum pixelType)
 {
 	// Assigns the type of the texture ot the texture object

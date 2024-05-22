@@ -4,14 +4,11 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
-//#include "Texture.h" Effectively removed texture logic but still keeping it in case i need it later - Rey
 #include "vertices.h"
 #include "block.h"
 #include "render.h"
 #include <iostream>
 #include "audio.h"
-#include "PowerUp.h"
-#include "vec3.h"
 #include <vector>
 #include "particleSystem.h"
 
@@ -30,15 +27,26 @@ float ball_velocity_x = 5.0f;
 float ball_velocity_y = 5.0f;
 float ball_velocity_z = 0.0f;
 
-// Paddle constants
-float paddleWidth = 0.60f;
+// Paddle primitive arrays
+std::vector<GLfloat> pill_vertices;
+std::vector<GLuint> pill_indices;
+
+// Paddle constants (collision related dimensions)
+float paddleWidth = 0.60f; // percentage of the pill the ball sees
 float paddleHeight = 0.25f;
 float paddleDepth = 0.25;
 
-// Ball speed
-float ball_speed = 7.5f;
+// Set paddle radius and legth
+float radius = 0.70f / 2;
+float length = 2.25f;
 
-float position_y = -2.0f; // Initial Y position (of the ball)
+// Controls the duration of the power-up notification
+float messageTimer = 0.0f;
+const float MESSAGE_DURATION = 2.5f;
+
+// Ball speed & initial Y position
+float ball_speed = 7.5f;
+float position_y = -2.0f; 
 
 // Define the game world boundaries
 const float gameWorldMinX = -2.1f;
@@ -58,6 +66,8 @@ bool isTransitioning = false; // Flag to be used with timer upon game level rese
 int currentColorIndex = 0; 
 std::vector<Cube> cubes;
 
+int points = 300; // Points per collision
+
 // Define an array of colors for the cubes 
 glm::vec3 cubeColors[12] = {
     glm::vec3(1.0f, 0.0f, 0.0f),   // Red
@@ -76,8 +86,8 @@ glm::vec3 cubeColors[12] = {
 
 // Define colors for each object changed
 glm::vec3 cubeColor = glm::vec3(1.0, 0.0, 0.0); // Red changed 
-glm::vec3 paddleColor = glm::vec3(0.741, 0.718, 0.420); // Green changed 
-glm::vec3 ballColor = glm::vec3(0.300, 1.196, 1.800); // Blue changed
+glm::vec3 paddleColor = glm::vec3(1.275, 0.910, 0.706); // Green changed 
+glm::vec3 ballColor = glm::vec3(1.300, 1.076, 1.800); // Blue changed
 
 glm::vec3 lightPos(5.0f, 200.0f, -15.0f);  // changed 
 glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // changed
@@ -89,9 +99,8 @@ float shininess = 2.0f; // changed
 
 // PBR properties
 float metallic = 3.25f;                          
-float roughness = 0.2f;                         
-float ao = 0.8f;
-
+float roughness = 0.0f;                         
+float ao = 0.95f;
 
 
 int main() {
@@ -105,25 +114,21 @@ int main() {
     audio.playBackgroundMusic();
 
     // Initialize shape state and set it as the window's user pointer
-    PaddleState paddleState; // Make sure this persists in scope as long as it's needed
+    PaddleState paddleState; 
     glfwSetWindowUserPointer(window, &paddleState);
 
     glfwSetKeyCallback(window, key);
     initializeGLAD();
 
-    // Specify the viewport of OpenGL in the Window
     setupViewport(750, 750);
 
     randomizeTrajectory(ball_speed);
-
-    // Print the randomized velocities for debugging
-    std::cout << "Randomized Ball Velocity: x=" << ball_velocity_x << " y=" << ball_velocity_y << std::endl;
 
     // Compile shaders
     Shader shaderProgram("default.vert", "default.frag");
     ParticleSystem particleSystem("particle.vert", "particle.frag");
 
-    particleSystem.setColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    particleSystem.setColor(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
     VAO VAO1;
     VAO1.Bind();
@@ -132,7 +137,6 @@ int main() {
     VBO VBO1(Vertices::cuboid_vertices, sizeof(Vertices::cuboid_vertices));
     EBO EBO1(Vertices::square_cube_indices, sizeof(Vertices::square_cube_indices));
 
-    // Requisite method calls
     VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
     VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
@@ -141,29 +145,17 @@ int main() {
     VBO1.Unbind();
     EBO1.Unbind();
 
-    // Texture initialization
     GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
-    /*Texture block("block-tex.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    block.texUnit(shaderProgram, "tex0", 0);*/
 
+    // Configure OpenGL state settings
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
-
-    GLfloat lineWidth = 2.0f;
-    glLineWidth(lineWidth);
+    glEnable(GL_DEPTH_TEST);
 
     // Paddle primitive initialization
-
-    std::vector<GLfloat> pill_vertices;
-    std::vector<GLuint> pill_indices;
-
     int numCylinderIndices = segments * 12;
     int numSphereIndices = segments * segments * 12;
     int totalIndices = numCylinderIndices + numSphereIndices;
-
-    // Set paddle radius and legth
-    float radius = 0.70f / 2;
-    float length = 2.25f;
 
     generatePillVertices(pill_vertices, radius, length);
     generatePillIndices(pill_indices);
@@ -182,18 +174,16 @@ int main() {
     VBO2.Unbind();
     EBO2.Unbind();
 
-    // Texture initialization
-    /*Texture cuboid("blue-neon.png", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    cuboid.texUnit(shaderProgram, "tex0", 0);*/
-
     //-- Adding the sphere --//
 
     // Generate sphere vertices
     float sphereRadius = 0.30f;
     unsigned int longitudeCount = 1296; // More segments mean a smoother sphere
     unsigned int latitudeCount = 648;
+
     std::vector<float> sphereVertices;
     std::vector<unsigned int> sphereIndices;
+
     generateSphere(sphereRadius, longitudeCount, latitudeCount, sphereVertices, sphereIndices);
 
     VAO VAO3;
@@ -202,7 +192,6 @@ int main() {
     VBO VBO3(sphereVertices.data(), sphereVertices.size() * sizeof(float));
     EBO EBO3(sphereIndices.data(), sphereIndices.size() * sizeof(unsigned int));
 
-    //Link vertex attributes
     VAO3.LinkAttrib(VBO3, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
     VAO3.LinkAttrib(VBO3, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     VAO3.LinkAttrib(VBO3, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
@@ -210,14 +199,9 @@ int main() {
     VAO3.Unbind();
     VBO3.Unbind();
     EBO3.Unbind();
+    EBO3.Unbind();
 
-    // Texture initialization
-    /*Texture sphere("circle.jpg", GL_TEXTURE_2D, GL_REPEAT, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-    sphere.texUnit(shaderProgram, "tex0", 0);*/
-
-    glEnable(GL_DEPTH_TEST);
-
-    double lastTime = glfwGetTime();
+    double lastTime = glfwGetTime(); // Used in deltaTime calculations later
 
     for (int row = 0; row < 4; ++row) {
         for (int col = 0; col < 7; ++col) {
@@ -229,49 +213,16 @@ int main() {
         }
     }
 
-    //Initialize imgui
     imguiInit(window);
 
     // Main while loop
     while (!glfwWindowShouldClose(window)) {
       
         colorBufferInit(r, g, b);
-
-
-        // Define a list to hold power-ups
-        std::vector<PowerUp> powerUps;
-
-        // Generate some initial power-ups
-        generatePowerUps(powerUps);
-        // Render power-ups
-        for (auto& powerUp : powerUps) {
-            if (powerUp.isActive()) {
-                powerUp.render();
-            }
-        }
-        // Create an instance of the shared state
-        GameState gameState;
-
-        // Pass gameState as an argument to functions or classes that need it
-
-
-        for (auto& powerUp : powerUps) {
-            if (powerUp.isActive() && checkPowerUpCollision(vec3(tra_x, position_y, tra_z), sphereRadius, powerUp)) {
-                powerUp.applyPowerUp(gameState); // Pass gameState as an argument
-                powerUp.deactivate();
-            }
-        }
-
-
-
-
-
-        // Specify the color of the background
         glClearColor(r, g, b, 1.0f);
 
         shaderProgram.Activate();
 
-        // Set object color uniforms changed
         int objectColorLoc = glGetUniformLocation(shaderProgram.ID, "objectColor");
 
         // -- Block related code --
@@ -295,9 +246,6 @@ int main() {
         // Scale all axes by 65%
         glUniform1f(uniID, 0.5f);
 
-        //block.Bind();
-
-        // Bind the VAO so OpenGL knows to use it
         VAO1.Bind();
 
         // Iterate through cubes and render them
@@ -334,7 +282,6 @@ int main() {
         PaddleView = glm::translate(PaddleView, paddlePos);
         PaddleProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 1.1f, 100.0f);
 
-        // Outputs the matrices into the Vertex Shader
         int PaddleModelLoc = glGetUniformLocation(shaderProgram.ID, "model");
         glUniformMatrix4fv(PaddleModelLoc, 1, GL_FALSE, glm::value_ptr(PaddleModel));
 
@@ -348,13 +295,10 @@ int main() {
         particleSystem.update(deltaTime);
         particleSystem.draw(PaddleView, PaddleProj);
 
-        //cuboid.Bind();
         VAO2.Bind();
         glDrawElements(GL_TRIANGLES, totalIndices, GL_UNSIGNED_INT, 0);
 
         // -- Sphere related code --
-        //double crntTime = glfwGetTime();
-
         glm::vec3 spherePosition = glm::vec3(tra_x, position_y, tra_z);
 
         glm::mat4 sphereModel = glm::mat4(1.0f);
@@ -387,17 +331,14 @@ int main() {
         glUniform1f(shininessLoc, shininess);
 
         // Retrieve uniform locations
-        //GLint albedoLoc = glGetUniformLocation(shaderProgram.ID, "albedo");
         GLint metallicLoc = glGetUniformLocation(shaderProgram.ID, "metallic");
         GLint roughnessLoc = glGetUniformLocation(shaderProgram.ID, "roughness");
         GLint aoLoc = glGetUniformLocation(shaderProgram.ID, "ao");
 
-        //glUniform3fv(albedoLoc, 1, glm::value_ptr(albedo));
         glUniform1f(metallicLoc, metallic);
         glUniform1f(roughnessLoc, roughness);
         glUniform1f(aoLoc, ao);
 
-        //sphereModel = glm::rotate(sphereModel, glm::radians(rotation), glm::vec3(rot_x, rot_y, rot_z));
         sphereView = glm::translate(sphereView, spherePosition);
         sphereProj = glm::perspective(glm::radians(30.0f), (float)(750 / 750), 0.1f, 100.0f);
 
@@ -411,7 +352,7 @@ int main() {
         glUniformMatrix4fv(sphereProjLoc, 1, GL_FALSE, glm::value_ptr(sphereProj));
 
 
-        // Start the Dear ImGui frame
+        // Start ImGui frame
         imguiNewFrame();
 
         if (showMenu || showHelp) {
@@ -428,7 +369,10 @@ int main() {
             if (resetGame) {
                 score = 0;
                 audio.stopBackgroundMusic();
-                resetGameState(audio); // Add immersion by also resetting the game audio upon restart
+                resetGameState(audio); 
+                
+                // Re render paddle with default dimensions
+                VBO2.Update(pill_vertices.data(), pill_vertices.size() * sizeof(float));
                 resetGame = false;
             }
         }
@@ -439,13 +383,15 @@ int main() {
             if (resetGame) {
                 score = 0;
                 resetGameState(audio);
+
+                VBO2.Update(pill_vertices.data(), pill_vertices.size() * sizeof(float));
                 resetGame = false;
             }
         }
 
         else {
 
-            updateScore();
+            updateScore(); // Imgui score overlay
             
             if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Escape))) {
                 isPaused = true;
@@ -465,15 +411,14 @@ int main() {
                 if (!cube.isDestroyed && cube.collidesWith(spherePosition, sphereRadius)) {
                     cube.isDestroyed = true;
                     audio.playCollisionSound();
-                    
-                    int points = 300;
                     incrementScore(points);
 
                     // Calculate the collision normal
                     glm::vec3 collisionNormal = glm::normalize(spherePosition - cube.position);
 
-                    // Modify this to become 'multi-hit blocks'
-                    applyPowerUp(cubes);
+                    // Calculate power-up likelihood on collision
+                    applyPowerUp(cubes, paddleWidth, length, audio);
+                    VBO2.Update(pill_vertices.data(), pill_vertices.size() * sizeof(float));
 
                     // Reflect the velocity of the sphere based on the collision normal
                     glm::vec3 reflectedVelocity = glm::reflect(velocity, collisionNormal);
@@ -483,6 +428,11 @@ int main() {
                 }
             }
 
+            if (showPowerUp) {
+                showPowerUpMessage(deltaTime); // Notify user when they trigger a power-up
+            }
+
+            // Render new blocks when all current blocks are destroyed
             bool allBlocksDestroyed = areAllBlocksDestroyed(cubes);
             if (allBlocksDestroyed) {
                 audio.playResetSound();
@@ -491,7 +441,6 @@ int main() {
             }
         }
 
-        //sphere.Bind();
         VAO3.Bind();
         glDrawElements(GL_TRIANGLES, sphereIndices.size(), GL_UNSIGNED_INT, 0);
 

@@ -11,6 +11,7 @@ public:
 	void playBackgroundMusic();
 	void playCollisionSound();
 	void playResponseSound();
+	void playPowerUpSound();
 	void playResetSound();
 	void playGameOverSound();
 	void setBackgroundMusicVolume(float volume);
