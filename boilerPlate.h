@@ -69,5 +69,7 @@ void initializeGLAD();
 void setupViewport(int width, int height);
 void colorBufferInit(float r, float g, float b);
 void resetGameState(Audio& audio);
+GLFWimage loadImage(const char* filepath);
+void freeImage(GLFWimage& image);
 
 #endif

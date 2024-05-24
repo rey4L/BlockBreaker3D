@@ -65,8 +65,6 @@ const float blockSpacingX = (gameWorldMaxX - gameWorldMinX) / 8.0f;
 const float blockSpacingY = (gameWorldMaxY - gameWorldMinY) / 4.0f;
 const float blockSize = 0.55f;
 
-bool isTransitioning = false; // Flag to be used with timer upon game level reset
-
 // Define an index to keep track of the current color
 int currentColorIndex = 0; 
 std::vector<Cube> cubes;
@@ -90,23 +88,22 @@ glm::vec3 cubeColors[12] = {
 };
 
 // Define colors for each object changed
-glm::vec3 cubeColor = glm::vec3(1.0, 0.0, 0.0); // Red changed 
-glm::vec3 paddleColor = glm::vec3(0.753, 0.753, 1.753); // Green changed 
-glm::vec3 ballColor = glm::vec3(1.300, 1.076, 1.800); // Blue changed
+glm::vec3 cubeColor = glm::vec3(1.0, 0.0, 0.0); 
+glm::vec3 paddleColor = glm::vec3(0.753, 0.753, 1.753); 
+glm::vec3 ballColor = glm::vec3(1.300, 1.076, 1.800); 
 
-glm::vec3 lightPos(5.0f, 45.0f, -15.0f);  // changed 
-glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // changed
-glm::vec3 ambientColor(0.2f, 0.2f, 0.2f); // changed 
+glm::vec3 lightPos(5.0f, 45.0f, -15.0f);  
+glm::vec3 lightColor(1.0f, 1.0f, 1.0f); 
+glm::vec3 ambientColor(0.2f, 0.2f, 0.2f); 
 
-float ambientStrength = 0.2f; // changed 
-float specularStrength = 2.0f; // changed 
-float shininess = 2.0f; // changed 
+float ambientStrength = 0.2f; 
+float specularStrength = 2.0f; 
+float shininess = 2.0f; 
 
 // PBR properties
 float metallic = 3.15f;                          
 float roughness = 0.0f;                         
 float ao = 0.95f;
-
 
 int main() {
 
@@ -126,6 +123,13 @@ int main() {
     initializeGLAD();
 
     setupViewport(750, 750);
+
+    // Load the logo image
+    GLFWimage icon = loadImage("logo.png");
+    if (icon.pixels) {
+        glfwSetWindowIcon(window, 1, &icon);
+        freeImage(icon); 
+    }
 
     randomizeTrajectory(ball_speed);
 

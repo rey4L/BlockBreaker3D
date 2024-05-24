@@ -84,3 +84,26 @@ void resetGameState(Audio& audio) {
     isGameOver = false;
     showPowerUp = false;
 }
+
+GLFWimage loadImage(const char* filepath) {
+    int width, height, channels;
+    unsigned char* data = stbi_load(filepath, &width, &height, &channels, 4); // 4 for RGBA
+    if (!data) {
+        std::cerr << "Failed to load image: " << filepath << std::endl;
+        return GLFWimage{ 0, 0, nullptr };
+    }
+
+    GLFWimage image;
+    image.width = width;
+    image.height = height;
+    image.pixels = data;
+
+    return image;
+}
+
+void freeImage(GLFWimage& image) {
+    if (image.pixels) {
+        stbi_image_free(image.pixels);
+        image.pixels = nullptr;
+    }
+}

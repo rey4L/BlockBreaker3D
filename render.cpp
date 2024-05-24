@@ -94,7 +94,6 @@ void updateBallPosition(float& tra_x, float& position_y, float& tra_z,
     }
 
     if (position_y <= bottom_boundary + collisionBuffer) {
-        std::cout << "Bottom collision" << std::endl;
         audio.stopBackgroundMusic();
         audio.playGameOverSound();
         isGameOver = true;

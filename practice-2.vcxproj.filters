@@ -172,15 +172,6 @@
     <None Include="model.vert">
       <Filter>Resource Files\shaders</Filter>
     </None>
-    <None Include="box.ply">
-      <Filter>Resource Files\textures</Filter>
-    </None>
-    <None Include="colored-paddle.glb">
-      <Filter>Resource Files\textures</Filter>
-    </None>
-    <None Include="models\colored-paddle.gltf">
-      <Filter>Resource Files\textures</Filter>
-    </None>
     <None Include="particle.frag">
       <Filter>Resource Files\shaders</Filter>
     </None>
@@ -189,13 +180,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="C:\Users\Licht\Downloads\blue-neon.png">
-      <Filter>Resource Files\textures</Filter>
-    </Image>
-    <Image Include="block-tex.png">
-      <Filter>Resource Files\textures</Filter>
-    </Image>
-    <Image Include="circle.jpg">
+    <Image Include="logo.png">
       <Filter>Resource Files\textures</Filter>
     </Image>
   </ItemGroup>

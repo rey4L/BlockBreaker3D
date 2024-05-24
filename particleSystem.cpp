@@ -54,22 +54,9 @@ void ParticleSystem::draw(glm::mat4 view, glm::mat4 projection) {
 
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-    /*for (const Particle& particle : particles) {
-        int sizeLoc = glGetUniformLocation(shader.ID, "pointSize");
-        glUniform1f(sizeLoc, particle.size);
-
-        glDrawArrays(GL_POINTS, 0, particles.size());
-    }*/
-    /*GLfloat lineWidth = 10.0f;
-    glLineWidth(lineWidth);*/
-
-      // Adjust the value as needed
     
-
     glDrawArrays(GL_POINTS, 0, particles.size());
 
-   /* glDrawArrays(GL_POINTS, 0, particles.size());*/
     glBindVertexArray(0);
     shader.Delete();
 }

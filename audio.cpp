@@ -59,9 +59,7 @@ void Audio::setBackgroundMusicVolume(float volume) {
     backgroundMusicVolume = volume;
     if (backgroundMusic) {
         backgroundMusic->setVolume(backgroundMusicVolume);
-    } else {
-        std::cout << "Background music is not playing; volume change stored but not applied." << std::endl;
-    }
+    } 
 }
 
 void Audio::setSoundEffectsVolume(float volume) {

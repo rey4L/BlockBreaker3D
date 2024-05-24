@@ -198,20 +198,15 @@
     <ClInclude Include="vertices.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="box.ply" />
-    <None Include="colored-paddle.glb" />
     <None Include="default.frag" />
     <None Include="default.vert" />
     <None Include="model.frag" />
     <None Include="model.vert" />
-    <None Include="models\colored-paddle.gltf" />
     <None Include="particle.frag" />
     <None Include="particle.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="block-tex.png" />
-    <Image Include="C:\Users\Licht\Downloads\blue-neon.png" />
-    <Image Include="circle.jpg" />
+    <Image Include="logo.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
