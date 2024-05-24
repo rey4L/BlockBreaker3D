@@ -54,7 +54,7 @@ void resetGameState(Audio& audio) {
     ball_velocity_z = 0.0f;
 
     // Randomize intiial ball velocity and reset ball default position on reset
-    position_y = -2.0f;
+    position_y = -1.967f;
     ball_speed = 7.5f;
     randomizeTrajectory(ball_speed);
 
