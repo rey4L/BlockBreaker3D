@@ -6,6 +6,7 @@ bool isGameOver = false;
 bool resetGame = false;
 bool showHelp = false;
 bool showPowerUp = false;
+bool showCountdown = false;
 
 int score = 0;
 
@@ -142,9 +143,20 @@ void renderMenu() {
 void renderHelpWindow() {
 	if (!showHelp) return;
 
+    ImVec4 closeButtonHoverColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); // Red color for hover
+    ImVec4 closeButtonActiveColor = ImVec4(0.8f, 0.0f, 0.0f, 1.0f); // Darker red for active
+
+    // Backup the style colors
+    ImVec4 oldButtonHoveredColor = ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];
+    ImVec4 oldButtonActiveColor = ImGui::GetStyle().Colors[ImGuiCol_ButtonActive];
+
+    // Set the new style colors
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, closeButtonHoverColor);
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, closeButtonActiveColor);
+
 	ImGui::Begin("Help",&showHelp, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-    ImGui::SetWindowSize(ImVec2(600, 386));
-    ImGui::SetWindowPos(ImVec2(80, 190));
+    ImGui::SetWindowSize(ImVec2(635, 415));
+    ImGui::SetWindowPos(ImVec2(63, 175));
 
     float defaultFontScale = ImGui::GetIO().FontGlobalScale;
     ImGui::SetWindowFontScale(1.2f);
@@ -167,17 +179,17 @@ void renderHelpWindow() {
 
     ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.0f, 1.0f), "Gameplay:");
     ImGui::BulletText("Use the paddle to bounce the ball and break blocks.");
-    ImGui::BulletText("Some blocks require multiple hits to break.");
+    ImGui::BulletText("Some blocks (white ones) have a 2%% chance of granting a powerup.");
     ImGui::BulletText("Each block awards 300 points when broken.");
-    ImGui::BulletText("Don't let the ball hit the ground, or you'll lose a life.");
+    ImGui::BulletText("Don't let the ball hit the ground.");
 
     ImGui::Spacing();
     ImGui::Separator();
     ImGui::Spacing();
 
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7523f, 0.343f, 0.0f, 1.0f));
-    ImGui::TextWrapped("Note: Do not press A and D simultaneously as it will result in no movement.");
-    ImGui::PopStyleColor();
+    ImGui::TextWrapped("Note: \n1. Do not press A and D simultaneously as it will result in no movement.\n2. When your paddle lenght increases so does the ball speed.");
+    ImGui::PopStyleColor(3);
 
     ImGui::Spacing();
     ImGui::Separator();
@@ -268,10 +280,52 @@ void showPowerUpMessage(float deltaTime) {
         ImGui::End();
 }
 
+void showCountdownMessage(float deltaTime) {
+    if (!showCountdown) return;
+
+    countdownTimer += deltaTime;
+
+    // Update the countdown value
+    if (countdownTimer >= COUNTDOWN_DURATION) {
+        countdownTimer = 0.0f;
+        countdownValue--;
+        if (countdownValue < 0) {
+            showCountdown = false;
+            countdownValue = 3;
+            return;
+        }
+    }
+
+    // Calculate fade effect
+    float alpha = 1.0f;
+    if (countdownTimer >= COUNTDOWN_DURATION - MESSAGE_FADE_DURATION) {
+        alpha = (COUNTDOWN_DURATION - countdownTimer) / MESSAGE_FADE_DURATION;
+    }
+
+    // Render the countdown message
+    ImGui::SetNextWindowPos(ImVec2(760 / 2, 760 / 2), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+    ImGui::SetNextWindowBgAlpha(alpha);
+    ImGui::Begin("Countdown Message", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
+
+    
+    if (countdownValue > 0) {
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 0, 255));
+        ImGui::Text("%d", countdownValue);
+        ImGui::PopStyleColor();
+    }
+    else {
+        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+        ImGui::Text("GO!");
+        ImGui::PopStyleColor();
+    }
+
+    ImGui::End();
+}
+
 void renderGameOverMenu() {
     if (!isGameOver) return;
 
-    ImGui::Begin("Game Over Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+    ImGui::Begin("Game Over Menu", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
     ImGui::SetWindowSize(ImVec2(300, 200));
     ImGui::SetWindowPos(ImVec2(225, 270));
 

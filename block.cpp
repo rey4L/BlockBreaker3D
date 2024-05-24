@@ -9,7 +9,6 @@ void Cube::render(Shader& shader, int& modelLoc, VAO& vao, const unsigned int* i
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     vao.Bind();
     glDrawElements(GL_TRIANGLES, indicesSize / sizeof(int), GL_UNSIGNED_INT, 0); // Draw the cubes as wireframes (n-1 lines)
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 bool Cube::collidesWith(glm::vec3 point, float radius) {
@@ -25,7 +24,7 @@ bool Cube::collidesWith(glm::vec3 point, float radius) {
     // Check for overlap on each axis
     glm::vec3 closestPoint = glm::clamp(point, minPos, maxPos);
     glm::vec3 delta = point - closestPoint;
-    float distanceSquared = glm::dot(delta, delta);
+    float distanceSquared = glm::dot(delta, delta); // Using dot product for efficiency
 
     if (distanceSquared > radius * radius) {
         return false;
@@ -35,14 +34,16 @@ bool Cube::collidesWith(glm::vec3 point, float radius) {
     glm::vec3 normal = glm::vec3(0.0f);
     float minOverlap = std::numeric_limits<float>::max();
 
+    // Check if the closest point is on the minimum side of the cube
     for (int i = 0; i < 3; ++i) {
         if (closestPoint[i] == minPos[i]) {
-            normal[i] = -1.0f;
+            normal[i] = -1.0f; // Set the normal direction
             float overlap = point[i] - minPos[i];
             if (overlap < minOverlap) {
-                minOverlap = overlap;
+                minOverlap = overlap; // Update minimum overlap
             }
         }
+        // Check if the closest point is on the maximum side of the cube
         else if (closestPoint[i] == maxPos[i]) {
             normal[i] = 1.0f;
             float overlap = maxPos[i] - point[i];
@@ -76,19 +77,19 @@ void applyPowerUp(std::vector<Cube>& cubes, float& paddleWidth, float& length, A
         cubes[randomIndex].color = glm::vec3(1.0f, 1.0f, 1.0f);
         multiHitCount++;
 
-        // 30% chance of getting a power-up from the randomly selected white blocks
+        // 2% chance of getting a power-up from the randomly selected white blocks
         std::uniform_real_distribution<>powerUpDis(0.0f, 1.0f);
         float powerUpChance = powerUpDis(gen);
         
-        if (powerUpChance <= 0.3f) 
+        if (powerUpChance <= 0.02f) 
         {
             std::uniform_int_distribution<> powerUpTypeDis(0, 1);
             int powerUpType = powerUpTypeDis(gen);
 
             if (powerUpType == 0) {
                 
-                // Increase paddle size and ball speed by 5.9%
-                float scaleFactor = 1.059f;
+                // Increase paddle size and ball speed by 4.5%
+                float scaleFactor = 1.045f;
                 paddleWidth *= scaleFactor;
                 length *= scaleFactor;
 

@@ -10,7 +10,6 @@
 #include <iostream>
 #include "audio.h"
 #include <vector>
-#include "particleSystem.h"
 
 // Translation matrix values for the ball
 float tra_x = 0.0f;
@@ -44,9 +43,15 @@ float length = 2.25f;
 float messageTimer = 0.0f;
 const float MESSAGE_DURATION = 2.5f;
 
+// Controls the level reset timeout
+const float COUNTDOWN_DURATION = 1.0f;
+const float MESSAGE_FADE_DURATION = 0.5f;
+float countdownTimer = 0.0f;
+int countdownValue = 3;
+
 // Ball speed & initial Y position
 float ball_speed = 7.5f;
-float position_y = -2.0f; 
+float position_y = -1.967f; 
 
 // Define the game world boundaries
 const float gameWorldMinX = -2.1f;
@@ -86,10 +91,10 @@ glm::vec3 cubeColors[12] = {
 
 // Define colors for each object changed
 glm::vec3 cubeColor = glm::vec3(1.0, 0.0, 0.0); // Red changed 
-glm::vec3 paddleColor = glm::vec3(1.275, 0.910, 0.706); // Green changed 
+glm::vec3 paddleColor = glm::vec3(0.753, 0.753, 1.753); // Green changed 
 glm::vec3 ballColor = glm::vec3(1.300, 1.076, 1.800); // Blue changed
 
-glm::vec3 lightPos(5.0f, 200.0f, -15.0f);  // changed 
+glm::vec3 lightPos(5.0f, 45.0f, -15.0f);  // changed 
 glm::vec3 lightColor(1.0f, 1.0f, 1.0f); // changed
 glm::vec3 ambientColor(0.2f, 0.2f, 0.2f); // changed 
 
@@ -98,7 +103,7 @@ float specularStrength = 2.0f; // changed
 float shininess = 2.0f; // changed 
 
 // PBR properties
-float metallic = 3.25f;                          
+float metallic = 3.15f;                          
 float roughness = 0.0f;                         
 float ao = 0.95f;
 
@@ -367,12 +372,15 @@ int main() {
             renderPauseMenu();
 
             if (resetGame) {
+                showCountdownMessage(deltaTime);
                 score = 0;
                 audio.stopBackgroundMusic();
-                resetGameState(audio); 
-                
+                resetGameState(audio);
+
                 // Re render paddle with default dimensions
+                resetPaddleSize();
                 VBO2.Update(pill_vertices.data(), pill_vertices.size() * sizeof(float));
+
                 resetGame = false;
             }
         }
@@ -384,9 +392,15 @@ int main() {
                 score = 0;
                 resetGameState(audio);
 
+                resetPaddleSize();
                 VBO2.Update(pill_vertices.data(), pill_vertices.size() * sizeof(float));
+
                 resetGame = false;
             }
+        }
+
+        else if (showCountdown) {
+            showCountdownMessage(deltaTime); // Show countdown message
         }
 
         else {
@@ -438,6 +452,7 @@ int main() {
                 audio.playResetSound();
                 resetGameState(audio);
                 resetGame = false;
+                showCountdown = true;
             }
         }
 

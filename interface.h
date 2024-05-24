@@ -14,8 +14,16 @@ extern bool showHelp;
 extern int score;
 extern bool showPowerUp;
 
+// Power-up message variables
 extern float messageTimer;
 extern const float MESSAGE_DURATION;
+
+// Level reset variables
+extern const float COUNTDOWN_DURATION;
+extern const float MESSAGE_FADE_DURATION;
+extern float countdownTimer;
+extern int countdownValue;
+extern bool showCountdown;
 
 extern float backgroundMusicVolume;
 extern float soundEffectsVolume;
@@ -27,6 +35,7 @@ void renderHelpWindow();
 void renderPauseMenu();
 void updateScore();
 void showPowerUpMessage(float deltaTime);
+void showCountdownMessage(float deltaTime);
 void renderGameOverMenu();
 void imguiCleanup();
 

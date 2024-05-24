@@ -44,7 +44,7 @@ void updatePaddlePosition(PaddleState* paddleState, double deltaTime, ParticleSy
     // Calculate current paddle position
     glm::vec3 currentPaddlePos = glm::vec3(paddleState->x_pos, paddleState->y_pos, paddleState->z_pos);
 
-    glm::vec3 leftOffset = glm::vec3(-0.99f, 0.0f, 0.0f);
+    glm::vec3 leftOffset = glm::vec3(-1.09f, 0.0f, 0.0f);
     glm::vec3 rightOffset = glm::vec3(1.29f, 0.0f, 0.0f);
 
     // REnder tracers when paddle is moved
@@ -65,6 +65,7 @@ void updatePaddlePosition(PaddleState* paddleState, double deltaTime, ParticleSy
 void updateBallPosition(float& tra_x, float& position_y, float& tra_z,
     float& ball_velocity_x, float& ball_velocity_y, float& ball_velocity_z,
     float deltaTime, Audio& audio, bool& isGameOver) {
+    
     // Update ball position
     tra_x += ball_velocity_x * deltaTime;
     position_y += ball_velocity_y * deltaTime;
@@ -78,16 +79,16 @@ void updateBallPosition(float& tra_x, float& position_y, float& tra_z,
     float front_boundary = -15.0f;
     float back_boundary = -5.0f;
 
-    const float collisionBuffer = 0.2f;
+    const float collisionBuffer = 0.1f; // Prevent edge cases of ball position matching boundary exactly
 
     if (tra_x <= left_boundary + collisionBuffer) {
-        tra_x = left_boundary + collisionBuffer;  // Correct position if boundary is crossed
+        tra_x = left_boundary + collisionBuffer;  
         ball_velocity_x = -ball_velocity_x;
         audio.playResponseSound();
     }
 
     if (tra_x >= right_boundary - collisionBuffer) {
-        tra_x = right_boundary - collisionBuffer;  // Correct position if boundary is crossed
+        tra_x = right_boundary - collisionBuffer;  
         ball_velocity_x = -ball_velocity_x;
         audio.playResponseSound();
     }
@@ -100,17 +101,17 @@ void updateBallPosition(float& tra_x, float& position_y, float& tra_z,
     }
 
     if (position_y >= top_boundary - collisionBuffer) {
-        position_y = top_boundary - collisionBuffer;  // Adjust position to correct upon boundary collision
+        position_y = top_boundary - collisionBuffer;  
         ball_velocity_y = -ball_velocity_y;
         audio.playResponseSound();
     }
 
     if (tra_z <= front_boundary + collisionBuffer) {
-        tra_z = front_boundary + collisionBuffer;  // Adjust position to correct upon boundary collision
+        tra_z = front_boundary + collisionBuffer;  
         ball_velocity_z = -ball_velocity_z;
     }
     if (tra_z >= back_boundary - collisionBuffer) {
-        tra_z = back_boundary - collisionBuffer;  // Adjust position to correct upon boundary collision
+        tra_z = back_boundary - collisionBuffer;  
         ball_velocity_z = -ball_velocity_z;
     }
 }
@@ -175,6 +176,12 @@ void randomizeTrajectory(float speed) {
     // Set the ball's velocity
     ball_velocity_x = initialVelocity.x;
     ball_velocity_y = initialVelocity.y;
+}
+
+void resetPaddleSize() {
+    radius = 0.70f / 2;
+    length = 2.25f;
+    updatePaddleVertices(pill_vertices, pill_indices, radius, length);
 }
 
 void incrementScore(int points) {

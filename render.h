@@ -9,10 +9,18 @@
 #include "particleSystem.h"
 #include "audio.h"
 #include "interface.h"
+#include "vertices.h"
 
 // Ball velocity variables
 extern float ball_velocity_x;
 extern float ball_velocity_y;
+
+// Default paddle dimensions
+extern float radius;
+extern float length;
+
+extern std::vector<GLfloat> pill_vertices;
+extern std::vector<GLuint> pill_indices;
 
 struct PaddleState {
 	float x_pos = 0.0f;
@@ -31,6 +39,7 @@ void handlePaddleCollision(glm::vec3& spherePosition, glm::vec3& velocity, glm::
 	float& ball_velocity_z, Audio& audio, float paddleWidth, float paddleHeight,
 	float paddleDepth);
 void randomizeTrajectory(float speed);
+void resetPaddleSize();
 void incrementScore(int points);
 
 #endif

@@ -53,12 +53,6 @@ void resetGameState(Audio& audio) {
     ball_velocity_y = 5.0f;
     ball_velocity_z = 0.0f;
 
-    // Reset paddle dimension to desfault on reset
-    float radius = 0.70f / 2;
-    float length = 2.25f;
-
-    updatePaddleVertices(pill_vertices, pill_indices, radius, length);
-
     // Randomize intiial ball velocity and reset ball default position on reset
     position_y = -2.0f;
     ball_speed = 7.5f;
@@ -82,7 +76,7 @@ void resetGameState(Audio& audio) {
         }
     }
 
-    // Reset multi hit counter
+    // Reset multi hit counter (white blocks counter)
     multiHitCount = 0;
    
     // Ensure the game is not paused or marked as over

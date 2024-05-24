@@ -30,7 +30,7 @@ const float b = 0.15;
 // Translation matrix values for the ball
 extern float tra_x;
 extern float tra_y;
-extern float tra_z; // z-value of the scene and paddle + z-value of the blocks;
+extern float tra_z; 
 
 // Rotation matrix values for the ball
 extern const float rot_x;
@@ -58,15 +58,6 @@ extern float position_y;
 
 // Ball speed
 extern float ball_speed;
-
-// Paddle related constants
-extern float paddleWidth; // percentage of the pill the ball sees
-extern float paddleHeight;
-extern float paddleDepth;
-
-// Set paddle radius and legth
-extern float radius;
-extern float length;
 
 extern glm::vec3 cubeColors[12];
 extern int currentColorIndex;

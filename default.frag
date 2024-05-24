@@ -16,9 +16,6 @@ uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 viewPos;
 
-// Tone mapping exposure
-uniform float exposure;
-
 const float PI = 3.14159265359;
 
 // Fresnel-Schlick approximation
