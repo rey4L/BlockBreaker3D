@@ -83,25 +83,19 @@ void applyPowerUp(std::vector<Cube>& cubes, float& paddleWidth, float& length, A
         
         if (powerUpChance <= 0.02f) 
         {
-            std::uniform_int_distribution<> powerUpTypeDis(0, 1);
-            int powerUpType = powerUpTypeDis(gen);
+            // Increase paddle size and ball speed by 4.5%
+            float scaleFactor = 1.045f;
+            paddleWidth *= scaleFactor;
+            length *= scaleFactor;
 
-            if (powerUpType == 0) {
-                
-                // Increase paddle size and ball speed by 4.5%
-                float scaleFactor = 1.045f;
-                paddleWidth *= scaleFactor;
-                length *= scaleFactor;
+            ball_speed *= scaleFactor;
 
-                ball_speed *= scaleFactor;
+            audio.playPowerUpSound();
+            updatePaddleVertices(pill_vertices, pill_indices, radius, length);
 
-                audio.playPowerUpSound();
-                updatePaddleVertices(pill_vertices, pill_indices, radius, length);
-
-                // Reset power-up notification flag and timer
-                showPowerUp = true;
-                messageTimer = 0.0f;
-            }
+            // Reset power-up notification flag and timer
+            showPowerUp = true;
+            messageTimer = 0.0f;
         }
     }
 }
