@@ -1,0 +1,13 @@
+prefix=/home/rey/Work/personal/misc/bb/BlockBreaker3D/external/install
+exec_prefix=${prefix}
+includedir=/home/rey/Work/personal/misc/bb/BlockBreaker3D/external/install/include
+libdir=/home/rey/Work/personal/misc/bb/BlockBreaker3D/external/install/lib
+
+Name: GLFW
+Description: A multi-platform library for OpenGL, window and input
+Version: 3.5.0
+URL: https://www.glfw.org/
+Requires.private: 
+Libs: -L${libdir} -lglfw3
+Libs.private: -lrt -lm -ldl
+Cflags: -I${includedir}

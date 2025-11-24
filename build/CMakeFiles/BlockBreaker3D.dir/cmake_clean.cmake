@@ -1,0 +1,40 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/BlockBreaker3D.dir/link.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/audio/audio.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/audio/audio.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/Texture.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/Texture.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/boilerPlate.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/boilerPlate.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/gl/EBO.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/gl/EBO.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/gl/VAO.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/gl/VAO.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/gl/VBO.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/gl/VBO.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/glad.c.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/glad.c.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/shaderClass.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/shaderClass.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/stb.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/core/stb.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/game/block.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/game/block.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/game/particleSystem.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/game/particleSystem.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/game/render.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/game/render.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/game/vertices.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/game/vertices.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/main.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/main.cpp.o.d"
+  "CMakeFiles/BlockBreaker3D.dir/src/ui/interface.cpp.o"
+  "CMakeFiles/BlockBreaker3D.dir/src/ui/interface.cpp.o.d"
+  "bin/BlockBreaker3D"
+  "bin/BlockBreaker3D.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang C CXX)
+  include(CMakeFiles/BlockBreaker3D.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

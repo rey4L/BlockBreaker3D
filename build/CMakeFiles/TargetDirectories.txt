@@ -1,0 +1,4 @@
+/home/rey/Work/personal/misc/bb/BlockBreaker3D/build/CMakeFiles/imgui.dir
+/home/rey/Work/personal/misc/bb/BlockBreaker3D/build/CMakeFiles/BlockBreaker3D.dir
+/home/rey/Work/personal/misc/bb/BlockBreaker3D/build/CMakeFiles/edit_cache.dir
+/home/rey/Work/personal/misc/bb/BlockBreaker3D/build/CMakeFiles/rebuild_cache.dir
